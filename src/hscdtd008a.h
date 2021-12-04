@@ -12,8 +12,10 @@
 #define HSCDTD_UT_PER_LSB_15B			0.150  // (0.150uT)
 
 // I2C address of the device.
-#define HSCDTD_ADDR						0x0F
+#define HSCDTD_DEFAULT_ADDR				0x0C
+#define HSCDTD_ALT_ADDR					0x0F
 
+// If we are compiling for
 #ifdef __cplusplus
 extern "C"
 {
@@ -99,41 +101,53 @@ typedef struct {
 } hscdtd_mag_t;
 
 
-int8_t initialize(void);
+typedef struct {
+	uint8_t addr;
+} hscdtd_device_t;
 
-int8_t set_mode(HSCDTD_CTRL1_PC_t mode);
 
-int8_t set_output_data_rate(HSCDTD_CTRL1_ODR_t odr);
+int8_t hscdtd_initialize(hscdtd_device_t *p_dev, uint8_t addr);
 
-int8_t set_state(HSCDTD_CTRL1_FS_t state);
+int8_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode);
 
-int8_t set_fifo_data_storage_method(HSCDTD_CTRL2_FCO_t fco);
+int8_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
+								   HSCDTD_CTRL1_ODR_t odr);
 
-int8_t set_fifo_comparision_method(HSCDTD_CTRL2_AOR_t aor);
+int8_t hscdtd_set_state(hscdtd_device_t *p_dev, HSCDTD_CTRL1_FS_t state);
 
-int8_t set_fifo_enable(HSCDTD_CTRL2_FF_t ff);
+int8_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
+										   HSCDTD_CTRL2_FCO_t fco);
 
-int8_t set_data_ready_pin_enable(HSCDTD_CTRL2_DEN_t den);
+int8_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
+										  HSCDTD_CTRL2_AOR_t aor);
 
-int8_t set_data_ready_pin_polarity(HSCDTD_CTRL2_DRP_t drp);
+int8_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev, HSCDTD_CTRL2_FF_t ff);
 
-int8_t set_resolution(HSCDTD_CTRL4_RS_t resolution);
+int8_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
+										HSCDTD_CTRL2_DEN_t den);
 
-int8_t who_i_am_check(void);
+int8_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
+										  HSCDTD_CTRL2_DRP_t drp);
 
-int8_t offset_calibration(void);
+int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev, 
+							 HSCDTD_CTRL4_RS_t resolution);
 
-int8_t temperature_compensation(void);
+int8_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev);
 
-int8_t read_temp(void);
+int8_t hscdtd_offset_calibration(hscdtd_device_t *p_dev);
 
-int8_t self_test(void);
+int8_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev);
 
-int8_t soft_reset(void);
+int8_t hscdtd_read_temp(hscdtd_device_t *p_dev);
 
-int8_t measure(hscdtd_mag_t *p_mag_data);
+int8_t hscdtd_self_test(hscdtd_device_t *p_dev);
 
-int8_t read_magnetodata(hscdtd_mag_t *p_mag_data);
+int8_t hscdtd_soft_reset(hscdtd_device_t *p_dev);
+
+int8_t hscdtd_measure(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data);
+
+int8_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev,
+							   hscdtd_mag_t *p_mag_data);
 
 
 #ifdef __cplusplus
