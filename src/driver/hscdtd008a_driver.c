@@ -1,77 +1,25 @@
 #include "hscdtd008a_driver.h"
 #include "hscdtd008a_reg.h"
 #include "platform.h"
-
-
-/**
- * @brief Read a register from the sensor.
- *
- * @param p_dev Pointer to device struct.
- * @param reg Register to read.
- * @param p_buffer Pointer to buffer to store result.
- * @return 0 on success.
- */
-int8_t read_register(hscdtd_device_t *p_dev, uint8_t reg, void *p_buffer)
-{
-    if (!p_buffer) {
-        return -1;  // TODO(bob): Define user error
-    }
-    return t_read_register(p_dev->addr, reg, 1, (uint8_t* ) p_buffer);
-}
-
-/**
- * @brief Read multiple registers from the sensor.
- *
- * @param p_dev Pointer to device struct.
- * @param reg Register to start reading.
- * @param length Number of registers to read.
- * @param p_buffer Pointer to buffer to store result.
- * @return 0 on success.
- */
-int8_t read_register_multi(hscdtd_device_t *p_dev,
-                           uint8_t reg,
-                           uint8_t length,
-                           void *p_buffer)
-{
-    if (!p_buffer) {
-        return -1;  // TODO(bob): Define user error
-    }
-    return t_read_register(p_dev->addr, reg, length, (uint8_t* ) p_buffer);
-}
-
-
-/**
- * @brief Write register to the sensor.
- *
- * @param p_dev Pointer to device struct.
- * @param reg Register to write.
- * @param p_buffer Pointer to buffer to get value from.
- * @return 0 on success.
- */
-int8_t write_register(hscdtd_device_t *p_dev, uint8_t reg, void *p_buffer)
-{
-    if (!p_buffer) {
-        return -1;  // TODO(bob): Define user error
-    }
-    return t_write_register(p_dev->addr, reg, 1, (uint8_t* ) p_buffer);
-}
+#include "transport.h"
 
 
 /**
  * @brief Configure the virtual device.
- * 
+ *
  * @param p_dev Pointer to device struct.
  * @param addr I2C addres of the device.
- * @return int8_t 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev, uint8_t addr)
+hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
+                                                uint8_t addr)
 {
     if (!p_dev) {
-        return -1;  // TODO(bob): Define user error
+        return HSCDTD_STAT_ERROR;
     }
     p_dev->addr = addr;
 
-    return 0;
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -79,18 +27,18 @@ int8_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev, uint8_t addr)
  * @brief Initialize the device.
  *
  * @param p_dev Pointer to device struct.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_initialize(hscdtd_device_t *p_dev)
+hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev)
 {
     int8_t i;
-    int8_t status;
+    hscdtd_status_t status;
 
-    // Check if the device pointer is valid
+    // Check if the device pointer is valid.
     // Only do this during initialization, after that we can assume
     // that the pointer is valid.
     if (!p_dev) {
-        return -1;  // TODO(bob): Define user error
+        return HSCDTD_STAT_ERROR;
     }
 
     // Open transport.
@@ -104,13 +52,13 @@ int8_t hscdtd_initialize(hscdtd_device_t *p_dev)
     // of times before we can actually properly communicate with the chip.
     for (i = 0; i < 10; i++) {
         status = hscdtd_soft_reset(p_dev);
-        if (status == 0)
+        if (status == HSCDTD_STAT_OK)
             break;
         t_sleep_ms(5);
     }
 
     // Check if reset went OK.
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     // Wait bit before getting started.
@@ -118,25 +66,25 @@ int8_t hscdtd_initialize(hscdtd_device_t *p_dev)
 
     // Check Who I Am
     status = hscdtd_who_i_am_check(p_dev);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     // Set output resolution to 15 bits.
     status = hscdtd_set_resolution(p_dev, HSCDTD_RESOLUTION_15_BIT);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     // Set the device to active.
     status = hscdtd_set_mode(p_dev, HSCDTD_MODE_ACTIVE);
-    if (status != 0)
-        return status;
-    
-    // Do a selftest
-    status = hscdtd_self_test(p_dev);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
-    return 0;
+    // Do a selftest
+    status = hscdtd_self_test(p_dev);
+    if (status != HSCDTD_STAT_OK)
+        return status;
+
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -161,24 +109,24 @@ int8_t hscdtd_initialize(hscdtd_device_t *p_dev)
  *
  * @param p_dev Pointer to device struct.
  * @param mode Desired device mode.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode)
+hscdtd_status_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL1_t reg;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.PC = mode;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
-    return 0;
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -198,25 +146,25 @@ int8_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode)
  *
  * @param p_dev Pointer to device struct.
  * @param odr ODR setting.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
-                                   HSCDTD_CTRL1_ODR_t odr)
+hscdtd_status_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
+                                            HSCDTD_CTRL1_ODR_t odr)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL1_t reg;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.ODR = odr;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
-    return 0;
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -234,24 +182,25 @@ int8_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
  *
  * @param p_dev Pointer to device struct.
  * @param state New state for the device.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_state(hscdtd_device_t *p_dev, HSCDTD_CTRL1_FS_t state)
+hscdtd_status_t hscdtd_set_state(hscdtd_device_t *p_dev,
+                                 HSCDTD_CTRL1_FS_t state)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL1_t reg;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.FS = state;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
-    return 0;
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -275,25 +224,25 @@ int8_t hscdtd_set_state(hscdtd_device_t *p_dev, HSCDTD_CTRL1_FS_t state)
  *
  * @param p_dev Pointer to device struct.
  * @param fco Storage method
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
-                                           HSCDTD_CTRL2_FCO_t fco)
+hscdtd_status_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
+                                                    HSCDTD_CTRL2_FCO_t fco)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.FCO = fco;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status !=0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
-    return 0;
+
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -313,25 +262,25 @@ int8_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
  *
  * @param p_dev Pointer to device struct.
  * @param aor Comparision method.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
-                                          HSCDTD_CTRL2_AOR_t aor)
+hscdtd_status_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
+                                                   HSCDTD_CTRL2_AOR_t aor)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
-    
+
     status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.AOR = aor;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status !=0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
-    return 0;
+
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -348,24 +297,25 @@ int8_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
  *
  * @param p_dev Pointer to device struct.
  * @param ff Fifo enable status.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev, HSCDTD_CTRL2_FF_t ff)
+hscdtd_status_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev,
+                                       HSCDTD_CTRL2_FF_t ff)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
-    
+
     status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.FF = ff;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status !=0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
-    return 0;
+
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -383,25 +333,25 @@ int8_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev, HSCDTD_CTRL2_FF_t ff)
  *
  * @param p_dev Pointer to device struct.
  * @param den Data Ready Pin enable status.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
-                                        HSCDTD_CTRL2_DEN_t den)
+hscdtd_status_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
+                                                 HSCDTD_CTRL2_DEN_t den)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
-    
+
     status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.DEN = den;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status !=0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
-    return 0;
+
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -421,25 +371,25 @@ int8_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
  *
  * @param p_dev Pointer to device struct.
  * @param drp DRP setting.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
-                                          HSCDTD_CTRL2_DRP_t drp)
+hscdtd_status_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
+                                                   HSCDTD_CTRL2_DRP_t drp)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
-    
+
     status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.DRP = drp;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-    if (status !=0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
-    return 0;
+
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -459,25 +409,25 @@ int8_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
  *
  * @param p_dev Pointer to device struct.
  * @param resolution Resolution to configure.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
-                             HSCDTD_CTRL4_RS_t resolution)
+hscdtd_status_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
+                                      HSCDTD_CTRL4_RS_t resolution)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL4_t reg;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL4, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.RS = resolution;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL4, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
-    return 0;
+    return HSCDTD_STAT_OK;
 }
 
 /* --------------------------------------------------
@@ -490,22 +440,22 @@ int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
  * is correct.
  *
  * @param p_dev Pointer to device struct.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev)
+hscdtd_status_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev)
 {
-    int8_t status;
+    hscdtd_status_t status;
     uint8_t reg;
-    
+
     // The datasheet refers to the WIA regster
     status = read_register(p_dev, HSCDTD_REG_WIA, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     // Value should be 0x49 according to the datashset.
     if (reg != 0x49)
-        return -1;
-    return 0;
+        return HSCDTD_STAT_CHECK_FAILED;
+    return HSCDTD_STAT_OK;
 }
 
 /**
@@ -517,26 +467,26 @@ int8_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev)
  * of the datasheet for more information.
  *
  * @param p_dev Pointer to device struct.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
+hscdtd_status_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL3_t reg;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     reg.OCL = 1;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     // TODO(bob): Figure out if bit needs to set back.
 
-    return 0;
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -557,25 +507,25 @@ int8_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
  * on page 9 of the datasheet for more information.
  *
  * @param p_dev Pointer to device struct.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
+hscdtd_status_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
 {
-    int8_t status;
+    hscdtd_status_t status;
     int8_t i;
     HSCDTD_CTRL3_t reg;
     HSCDTD_STAT_t stat;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     reg.TCS = 1;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     status = -1;
     // Attempt to check status for ~50ms (Duration does not really matter).
     // If no temperature after that, something has gone wrong.
@@ -584,9 +534,9 @@ int8_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
 
         // Read status register to check if temp data is ready.
         status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
-        if (status != 0)
+        if (status != HSCDTD_STAT_OK)
             return status;
-        
+
         if (stat.TRDY == 1) {
             // The datasheet specifies that the bit is cleared after
             // reading the TEMP register.
@@ -631,24 +581,24 @@ int8_t hscdtd_read_temp(hscdtd_device_t *p_dev)
  * Refer to 'Selftest' on page 6 of the datasheet for more information.
  *
  * @param p_dev Pointer to device struct.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_self_test(hscdtd_device_t *p_dev)
+hscdtd_status_t hscdtd_self_test(hscdtd_device_t *p_dev)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL3_t reg;
     uint8_t self_test_resp;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     reg.STC = 1;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     // Wait a bit for the result.
     // This is not specified in the datasheet, but just to be safe.
     t_sleep_ms(5);
@@ -656,22 +606,22 @@ int8_t hscdtd_self_test(hscdtd_device_t *p_dev)
     // According to page 6 of the datasheet value of STB should be 0xAA at
     // first read.
     status = read_register(p_dev, HSCDTD_REG_SELFTEST_RESP, &self_test_resp);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     if (self_test_resp != 0xAA)
-        return -20;  //TODO(bob): Replace with better error code
-    
+        return HSCDTD_STAT_CHECK_FAILED;
+
     // After reading again value should be 0x55.
     status = read_register(p_dev, HSCDTD_REG_SELFTEST_RESP, &self_test_resp);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     if (self_test_resp != 0x55)
-        return -30;  //TODO(bob): Replace with better error code
+        return HSCDTD_STAT_CHECK_FAILED;
 
     // If all those test passed, the test is successful.
-    return 0;
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -684,11 +634,11 @@ int8_t hscdtd_self_test(hscdtd_device_t *p_dev)
  * Device must be reconfigured after soft reset.
  *
  * @param p_dev Pointer to device struct.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_soft_reset(hscdtd_device_t *p_dev)
+hscdtd_status_t hscdtd_soft_reset(hscdtd_device_t *p_dev)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_CTRL3_t reg;
 
     // The intention is to reset the device and its registers.
@@ -696,22 +646,22 @@ int8_t hscdtd_soft_reset(hscdtd_device_t *p_dev)
     // register.
     reg.SRST = 1;
     status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     t_sleep_ms(5);  // Wait a bit for the chip to reset.
 
     // Check if the reset went OK
     status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     if (reg.SRST == 1) {
         // If bit is set, something went wrong
-        return -1;
+        return HSCDTD_STAT_ERROR;
     }
     // Reset was successful
-    return 0;
+    return HSCDTD_STAT_OK;
 }
 
 
@@ -720,43 +670,44 @@ int8_t hscdtd_soft_reset(hscdtd_device_t *p_dev)
  *
  * @param p_dev Pointer to device struct.
  * @param p_mag_data A pointer to a struct to store the data.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_measure(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data)
+hscdtd_status_t hscdtd_measure(hscdtd_device_t *p_dev,
+                               hscdtd_mag_t *p_mag_data)
 {
-    int8_t status;
+    hscdtd_status_t status;
     HSCDTD_STAT_t stat;
     HSCDTD_CTRL3_t ctrl3;
     int8_t i;
 
     if (!p_mag_data) {
-        return -1;  //TODO(bob): Replace with user error code
+        return HSCDTD_STAT_ERROR;
     }
 
     // Read the status register to clear any status bits.
     status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
     // 'status' is the return value of the register read function, not the
     // content of the register.
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     // Start measurement
     status = read_register(p_dev, HSCDTD_REG_CTRL3, &ctrl3);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     ctrl3.FRC = 1;
 
     status = write_register(p_dev, HSCDTD_REG_CTRL3, &ctrl3);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
-    
+
     // Wait until data is ready.
     for (i = 0; i < 50; i++) {
         status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
-        if (status != 0)
+        if (status != HSCDTD_STAT_OK)
             return status;
-        
+
         if (stat.DRDY == 1)
             break;
 
@@ -764,7 +715,7 @@ int8_t hscdtd_measure(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data)
     }
 
     if (stat.DRDY != 1)
-        return -5;  //TODO(bob): Replace with better error codes.
+        return HSCDTD_STAT_NO_DATA;
 
     // Use magneto read function to read the data into the pointer.
     status = hscdtd_read_magnetodata(p_dev, p_mag_data);
@@ -784,25 +735,26 @@ int8_t hscdtd_measure(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data)
  *
  * @param p_dev Pointer to device struct.
  * @param p_mag_data A pointer to a struct to store the data.
- * @return 0 on success.
+ * @return hscdtd_status.
  */
-int8_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data)
+hscdtd_status_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev,
+                                        hscdtd_mag_t *p_mag_data)
 {
-    int8_t status;
+    hscdtd_status_t status;
     int8_t i;
     uint8_t buf[6];
     int16_t tmp;
     float *mag_data;
 
     if (!p_mag_data) {
-        return -1;  //TODO(bob): Replace with user error code
+        return HSCDTD_STAT_ERROR;
     }
 
     mag_data = &p_mag_data->mag_x;
 
     // Read all mag data registers in one go.
     status = read_register_multi(p_dev, HSCDTD_REG_XOUT_L, 6, buf);
-    if (status != 0)
+    if (status != HSCDTD_STAT_OK)
         return status;
 
     for (i = 0; i < HSCDTD_NUM_AXIS; i++) {
@@ -811,5 +763,5 @@ int8_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data)
         mag_data[i] = tmp * HSCDTD_UT_PER_LSB_15B;  // Assumes 15 bit value.
     }
 
-    return 0;
+    return HSCDTD_STAT_OK;
 }

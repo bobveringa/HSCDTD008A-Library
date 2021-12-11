@@ -11,7 +11,10 @@ int8_t t_open(void)
     return 0;
 }
 
-int8_t t_read_register(uint8_t addr, uint8_t reg, uint8_t length, uint8_t *p_buffer)
+int8_t t_read_register(uint8_t addr,
+                       uint8_t reg,
+                       uint8_t length,
+                       uint8_t *p_buffer)
 {
     uint8_t status;
     int8_t i = 0;
@@ -30,7 +33,10 @@ int8_t t_read_register(uint8_t addr, uint8_t reg, uint8_t length, uint8_t *p_buf
     return 0;
 }
 
-int8_t t_write_register(uint8_t addr, uint8_t reg, uint8_t length, uint8_t *p_buffer)
+int8_t t_write_register(uint8_t addr,
+                        uint8_t reg,
+                        uint8_t length,
+                        uint8_t *p_buffer)
 {
     uint8_t status;
 

@@ -7,10 +7,10 @@ class HSCDTD008A {
 public:
     void begin(void);
     void begin(uint8_t device_addr);
-    int8_t initialize(void);
-    int8_t start_mag_measurement(void);
-    int8_t temperature_compensation(void);
-    int8_t offset_calibration(void);
+    hscdtd_status_t initialize(void);
+    hscdtd_status_t start_mag_measurement(void);
+    hscdtd_status_t temperature_compensation(void);
+    hscdtd_status_t offset_calibration(void);
 
     hscdtd_mag_t mag;
 
