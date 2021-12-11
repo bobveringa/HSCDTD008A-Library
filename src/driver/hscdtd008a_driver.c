@@ -1,11 +1,11 @@
-#include "hscdtd008a.h"
+#include "hscdtd008a_driver.h"
 #include "hscdtd008a_reg.h"
 #include "platform.h"
 
 
 /**
  * @brief Read a register from the sensor.
- * 
+ *
  * @param p_dev Pointer to device struct.
  * @param reg Register to read.
  * @param p_buffer Pointer to buffer to store result.
@@ -21,16 +21,16 @@ int8_t read_register(hscdtd_device_t *p_dev, uint8_t reg, void *p_buffer)
 
 /**
  * @brief Read multiple registers from the sensor.
- * 
+ *
  * @param p_dev Pointer to device struct.
  * @param reg Register to start reading.
  * @param length Number of registers to read.
  * @param p_buffer Pointer to buffer to store result.
  * @return 0 on success.
  */
-int8_t read_register_multi(hscdtd_device_t *p_dev, 
-						   uint8_t reg, 
-						   uint8_t length, 
+int8_t read_register_multi(hscdtd_device_t *p_dev,
+						   uint8_t reg,
+						   uint8_t length,
 						   void *p_buffer)
 {
 	if (!p_buffer) {
@@ -42,7 +42,7 @@ int8_t read_register_multi(hscdtd_device_t *p_dev,
 
 /**
  * @brief Write register to the sensor.
- * 
+ *
  * @param p_dev Pointer to device struct.
  * @param reg Register to write.
  * @param p_buffer Pointer to buffer to get value from.
@@ -58,24 +58,40 @@ int8_t write_register(hscdtd_device_t *p_dev, uint8_t reg, void *p_buffer)
 
 
 /**
+ * @brief Configure the virtual device.
+ * 
+ * @param p_dev Pointer to device struct.
+ * @param addr I2C addres of the device.
+ * @return int8_t 0 on success.
+ */
+int8_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev, uint8_t addr)
+{
+	if (!p_dev) {
+		return -1;  // TODO(bob): Define user error
+	}
+	p_dev->addr = addr;
+
+	return 0;
+}
+
+
+/**
  * @brief Initialize the device.
  *
  * @param p_dev Pointer to device struct.
  * @return 0 on success.
  */
-int8_t hscdtd_initialize(hscdtd_device_t *p_dev, uint8_t addr)
+int8_t hscdtd_initialize(hscdtd_device_t *p_dev)
 {
 	int8_t i;
 	int8_t status;
 
 	// Check if the device pointer is valid
 	// Only do this during initialization, after that we can assume
-	// That the pointer is valid.
+	// that the pointer is valid.
 	if (!p_dev) {
 		return -1;  // TODO(bob): Define user error
 	}
-
-	p_dev->addr = addr;
 
 	// Open transport.
 	t_open();
@@ -369,7 +385,7 @@ int8_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev, HSCDTD_CTRL2_FF_t ff)
  * @param den Data Ready Pin enable status.
  * @return 0 on success.
  */
-int8_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev, 
+int8_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
 										HSCDTD_CTRL2_DEN_t den)
 {
 	int8_t status;
@@ -445,7 +461,7 @@ int8_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
  * @param resolution Resolution to configure.
  * @return 0 on success.
  */
-int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev, 
+int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
 							 HSCDTD_CTRL4_RS_t resolution)
 {
 	int8_t status;
@@ -607,7 +623,6 @@ int8_t hscdtd_read_temp(hscdtd_device_t *p_dev)
 
 	return temp;
 }
-
 
 
 /**

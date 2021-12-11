@@ -1,5 +1,5 @@
-#ifndef __HSCDTD008A__
-#define __HSCDTD008A__
+#ifndef __HSCDTD008A_DRIVER__
+#define __HSCDTD008A_DRIVER__
 
 #include <stdint.h>
 #include "platform.h"
@@ -8,7 +8,6 @@
  * General Constants
  */
 #define HSCDTD_NUM_AXIS 				3
-#define HSCDTD_MT_PER_LSB_15B			0.00015  // (0.150uT)
 #define HSCDTD_UT_PER_LSB_15B			0.150  // (0.150uT)
 
 // I2C address of the device.
@@ -106,7 +105,9 @@ typedef struct {
 } hscdtd_device_t;
 
 
-int8_t hscdtd_initialize(hscdtd_device_t *p_dev, uint8_t addr);
+int8_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev, uint8_t addr);
+
+int8_t hscdtd_initialize(hscdtd_device_t *p_dev);
 
 int8_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode);
 
@@ -129,7 +130,7 @@ int8_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
 int8_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
 										  HSCDTD_CTRL2_DRP_t drp);
 
-int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev, 
+int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
 							 HSCDTD_CTRL4_RS_t resolution);
 
 int8_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev);
@@ -152,6 +153,6 @@ int8_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev,
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif  // __cplusplus
 
-#endif //__HSCDTD008A__
+#endif  //__HSCDTD008A_DRIVER__
