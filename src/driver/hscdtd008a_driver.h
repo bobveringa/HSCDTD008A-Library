@@ -27,21 +27,20 @@ extern "C"
 typedef enum {
     HSCDTD_MODE_STANDBY = 0x00,
     HSCDTD_MODE_ACTIVE = 0x01,
-} HSCDTD_CTRL1_PC_t;
-
+} hscdtd_mode_t;
 
 typedef enum {
     HSCDTD_ODR_0_5HZ = 0x00,
     HSCDTD_ODR_10HZ = 0x01,
     HSCDTD_ODR_20HZ = 0x10,
     HSCDTD_ODR_100HZ = 0x11,
-} HSCDTD_CTRL1_ODR_t;
+} hscdtd_odr_t;
 
 
 typedef enum {
     HSCDTD_STATE_NORMAL = 0x00,
     HSCDTD_STATE_FORCE = 0x01,
-} HSCDTD_CTRL1_FS_t;
+} hscdtd_state_t;
 
 
 /* --------------------------------------------------
@@ -50,33 +49,33 @@ typedef enum {
 
 
 typedef enum {
-    HSCDTD_FIFO_DIRECT = 0x00,
-    HSCDTD_FIFO_COMP = 0x01,
-} HSCDTD_CTRL2_FCO_t;
+    HSCDTD_FCO_DIRECT = 0x00,
+    HSCDTD_FCO_COMP = 0x01,
+} hscdtd_fco_t;
 
 
 typedef enum {
-    HSCDTD_COMP_OR = 0x00,
-    HSCDTD_COMP_AND = 0x01,
-} HSCDTD_CTRL2_AOR_t;
+    HSCDTD_AOR_OR = 0x00,
+    HSCDTD_AOR_AND = 0x01,
+} hscdtd_aor_t;
 
 
 typedef enum {
-    HSCDTD_FIFO_DISABLE = 0x00,
-    HSCDTD_FIFO_ENABLE = 0x01,
-} HSCDTD_CTRL2_FF_t;
+    HSCDTD_FF_DISABLE = 0x00,
+    HSCDTD_FF_ENABLE = 0x01,
+} hscdtd_ff_t;
 
 
 typedef enum {
-    HSCDTD_DRDY_CTRL_DISABLED = 0x00,
-    HSCDTD_DRDY_CTRL_ENABLED = 0x01,
-} HSCDTD_CTRL2_DEN_t;
+    HSCDTD_DEN_DISABLED = 0x00,
+    HSCDTD_DEN_ENABLED = 0x01,
+} hscdtd_den_t;
 
 
 typedef enum {
     HSCDTD_DRP_ACTIVE_LOW = 0x00,
     HSCDTD_DRP_ACTIVE_HIGH = 0x01,
-} HSCDTD_CTRL2_DRP_t;
+} hscdtd_drp_t;
 
 
 /* --------------------------------------------------
@@ -86,7 +85,7 @@ typedef enum {
 typedef enum {
     HSCDTD_RESOLUTION_14_BIT = 0x00,
     HSCDTD_RESOLUTION_15_BIT = 0x01,
-} HSCDTD_CTRL4_RS_t;
+} hscdtd_res_t;
 
 
 /* --------------------------------------------------
@@ -120,31 +119,31 @@ hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
 
 hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev);
 
-hscdtd_status_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode);
+hscdtd_status_t hscdtd_set_mode(hscdtd_device_t *p_dev, hscdtd_mode_t mode);
 
 hscdtd_status_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
-                                            HSCDTD_CTRL1_ODR_t odr);
+                                            hscdtd_odr_t odr);
 
 hscdtd_status_t hscdtd_set_state(hscdtd_device_t *p_dev,
-                                 HSCDTD_CTRL1_FS_t state);
+                                 hscdtd_state_t state);
 
 hscdtd_status_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
-                                                    HSCDTD_CTRL2_FCO_t fco);
+                                                    hscdtd_fco_t fco);
 
 hscdtd_status_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
-                                                   HSCDTD_CTRL2_AOR_t aor);
+                                                   hscdtd_aor_t aor);
 
 hscdtd_status_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev,
-                                       HSCDTD_CTRL2_FF_t ff);
+                                       hscdtd_ff_t ff);
 
 hscdtd_status_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
-                                                 HSCDTD_CTRL2_DEN_t den);
+                                                 hscdtd_den_t den);
 
 hscdtd_status_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
-                                                   HSCDTD_CTRL2_DRP_t drp);
+                                                   hscdtd_drp_t drp);
 
 hscdtd_status_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
-                                      HSCDTD_CTRL4_RS_t resolution);
+                                      hscdtd_res_t resolution);
 
 hscdtd_status_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev);
 

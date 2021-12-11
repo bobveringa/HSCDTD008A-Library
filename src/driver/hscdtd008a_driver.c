@@ -111,7 +111,7 @@ hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev)
  * @param mode Desired device mode.
  * @return hscdtd_status.
  */
-hscdtd_status_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode)
+hscdtd_status_t hscdtd_set_mode(hscdtd_device_t *p_dev, hscdtd_mode_t mode)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL1_t reg;
@@ -149,7 +149,7 @@ hscdtd_status_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode)
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
-                                            HSCDTD_CTRL1_ODR_t odr)
+                                            hscdtd_odr_t odr)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL1_t reg;
@@ -185,7 +185,7 @@ hscdtd_status_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_set_state(hscdtd_device_t *p_dev,
-                                 HSCDTD_CTRL1_FS_t state)
+                                 hscdtd_state_t state)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL1_t reg;
@@ -227,7 +227,7 @@ hscdtd_status_t hscdtd_set_state(hscdtd_device_t *p_dev,
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
-                                                    HSCDTD_CTRL2_FCO_t fco)
+                                                    hscdtd_fco_t fco)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
@@ -265,7 +265,7 @@ hscdtd_status_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
-                                                   HSCDTD_CTRL2_AOR_t aor)
+                                                   hscdtd_aor_t aor)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
@@ -300,7 +300,7 @@ hscdtd_status_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev,
-                                       HSCDTD_CTRL2_FF_t ff)
+                                       hscdtd_ff_t ff)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
@@ -336,7 +336,7 @@ hscdtd_status_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev,
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
-                                                 HSCDTD_CTRL2_DEN_t den)
+                                                 hscdtd_den_t den)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
@@ -374,7 +374,7 @@ hscdtd_status_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
-                                                   HSCDTD_CTRL2_DRP_t drp)
+                                                   hscdtd_drp_t drp)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL2_t reg;
@@ -412,7 +412,7 @@ hscdtd_status_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
-                                      HSCDTD_CTRL4_RS_t resolution)
+                                      hscdtd_res_t resolution)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL4_t reg;
@@ -526,7 +526,7 @@ hscdtd_status_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
     if (status != HSCDTD_STAT_OK)
         return status;
 
-    status = -1;
+    status = HSCDTD_STAT_ERROR;
     // Attempt to check status for ~50ms (Duration does not really matter).
     // If no temperature after that, something has gone wrong.
     for (i = 0; i < 50; i++) {
@@ -543,7 +543,7 @@ hscdtd_status_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
             // We don't need the value here, so we don't need the return
             // value.
             hscdtd_read_temp(p_dev);
-            status = 0;
+            status = HSCDTD_STAT_OK;
             break;
         }
     }
