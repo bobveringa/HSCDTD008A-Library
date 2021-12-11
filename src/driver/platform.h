@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-#define I2C_MODE_STD			100000
-#define I2C_MODE_FAST			400000
-#define I2C_MODE_FAST_PLUS		1000000
-#define I2C_MODE_HIGH_SPEED		3400000
+#define I2C_MODE_STD            100000
+#define I2C_MODE_FAST           400000
+#define I2C_MODE_FAST_PLUS      1000000
+#define I2C_MODE_HIGH_SPEED     3400000
 
 #ifdef __cplusplus
 extern "C"

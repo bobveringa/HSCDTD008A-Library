@@ -13,10 +13,10 @@
  */
 int8_t read_register(hscdtd_device_t *p_dev, uint8_t reg, void *p_buffer)
 {
-	if (!p_buffer) {
-		return -1;  // TODO(bob): Define user error
-	}
-	return t_read_register(p_dev->addr, reg, 1, (uint8_t* ) p_buffer);
+    if (!p_buffer) {
+        return -1;  // TODO(bob): Define user error
+    }
+    return t_read_register(p_dev->addr, reg, 1, (uint8_t* ) p_buffer);
 }
 
 /**
@@ -29,14 +29,14 @@ int8_t read_register(hscdtd_device_t *p_dev, uint8_t reg, void *p_buffer)
  * @return 0 on success.
  */
 int8_t read_register_multi(hscdtd_device_t *p_dev,
-						   uint8_t reg,
-						   uint8_t length,
-						   void *p_buffer)
+                           uint8_t reg,
+                           uint8_t length,
+                           void *p_buffer)
 {
-	if (!p_buffer) {
-		return -1;  // TODO(bob): Define user error
-	}
-	return t_read_register(p_dev->addr, reg, length, (uint8_t* ) p_buffer);
+    if (!p_buffer) {
+        return -1;  // TODO(bob): Define user error
+    }
+    return t_read_register(p_dev->addr, reg, length, (uint8_t* ) p_buffer);
 }
 
 
@@ -50,10 +50,10 @@ int8_t read_register_multi(hscdtd_device_t *p_dev,
  */
 int8_t write_register(hscdtd_device_t *p_dev, uint8_t reg, void *p_buffer)
 {
-	if (!p_buffer) {
-		return -1;  // TODO(bob): Define user error
-	}
-	return t_write_register(p_dev->addr, reg, 1, (uint8_t* ) p_buffer);
+    if (!p_buffer) {
+        return -1;  // TODO(bob): Define user error
+    }
+    return t_write_register(p_dev->addr, reg, 1, (uint8_t* ) p_buffer);
 }
 
 
@@ -66,12 +66,12 @@ int8_t write_register(hscdtd_device_t *p_dev, uint8_t reg, void *p_buffer)
  */
 int8_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev, uint8_t addr)
 {
-	if (!p_dev) {
-		return -1;  // TODO(bob): Define user error
-	}
-	p_dev->addr = addr;
+    if (!p_dev) {
+        return -1;  // TODO(bob): Define user error
+    }
+    p_dev->addr = addr;
 
-	return 0;
+    return 0;
 }
 
 
@@ -83,60 +83,60 @@ int8_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev, uint8_t addr)
  */
 int8_t hscdtd_initialize(hscdtd_device_t *p_dev)
 {
-	int8_t i;
-	int8_t status;
+    int8_t i;
+    int8_t status;
 
-	// Check if the device pointer is valid
-	// Only do this during initialization, after that we can assume
-	// that the pointer is valid.
-	if (!p_dev) {
-		return -1;  // TODO(bob): Define user error
-	}
+    // Check if the device pointer is valid
+    // Only do this during initialization, after that we can assume
+    // that the pointer is valid.
+    if (!p_dev) {
+        return -1;  // TODO(bob): Define user error
+    }
 
-	// Open transport.
-	t_open();
+    // Open transport.
+    t_open();
 
-	// Wait a bit for the I2C bus to open.
-	t_sleep_ms(100);
+    // Wait a bit for the I2C bus to open.
+    t_sleep_ms(100);
 
-	// Reset the chip to make sure register have expected values.
-	// Some chips behave weird when starting up. So we have to try a bunch
-	// of times before we can actually properly communicate with the chip.
-	for (i = 0; i < 10; i++) {
-		status = hscdtd_soft_reset(p_dev);
-		if (status == 0)
-			break;
-		t_sleep_ms(5);
-	}
+    // Reset the chip to make sure register have expected values.
+    // Some chips behave weird when starting up. So we have to try a bunch
+    // of times before we can actually properly communicate with the chip.
+    for (i = 0; i < 10; i++) {
+        status = hscdtd_soft_reset(p_dev);
+        if (status == 0)
+            break;
+        t_sleep_ms(5);
+    }
 
-	// Check if reset went OK.
-	if (status != 0)
-		return status;
+    // Check if reset went OK.
+    if (status != 0)
+        return status;
 
-	// Wait bit before getting started.
-	t_sleep_ms(50);
+    // Wait bit before getting started.
+    t_sleep_ms(50);
 
-	// Check Who I Am
-	status = hscdtd_who_i_am_check(p_dev);
-	if (status != 0)
-		return status;
+    // Check Who I Am
+    status = hscdtd_who_i_am_check(p_dev);
+    if (status != 0)
+        return status;
 
-	// Set output resolution to 15 bits.
-	status = hscdtd_set_resolution(p_dev, HSCDTD_RESOLUTION_15_BIT);
-	if (status != 0)
-		return status;
+    // Set output resolution to 15 bits.
+    status = hscdtd_set_resolution(p_dev, HSCDTD_RESOLUTION_15_BIT);
+    if (status != 0)
+        return status;
 
-	// Set the device to active.
-	status = hscdtd_set_mode(p_dev, HSCDTD_MODE_ACTIVE);
-	if (status != 0)
-		return status;
-	
-	// Do a selftest
-	status = hscdtd_self_test(p_dev);
-	if (status != 0)
-		return status;
+    // Set the device to active.
+    status = hscdtd_set_mode(p_dev, HSCDTD_MODE_ACTIVE);
+    if (status != 0)
+        return status;
+    
+    // Do a selftest
+    status = hscdtd_self_test(p_dev);
+    if (status != 0)
+        return status;
 
-	return 0;
+    return 0;
 }
 
 
@@ -165,20 +165,20 @@ int8_t hscdtd_initialize(hscdtd_device_t *p_dev)
  */
 int8_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode)
 {
-	int8_t status;
-	HSCDTD_CTRL1_t reg;
+    int8_t status;
+    HSCDTD_CTRL1_t reg;
 
-	status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.PC = mode;
+    status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.PC = mode;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-	if (status != 0)
-		return status;
+    status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
+    if (status != 0)
+        return status;
 
-	return 0;
+    return 0;
 }
 
 
@@ -201,22 +201,22 @@ int8_t hscdtd_set_mode(hscdtd_device_t *p_dev, HSCDTD_CTRL1_PC_t mode)
  * @return 0 on success.
  */
 int8_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
-								   HSCDTD_CTRL1_ODR_t odr)
+                                   HSCDTD_CTRL1_ODR_t odr)
 {
-	int8_t status;
-	HSCDTD_CTRL1_t reg;
+    int8_t status;
+    HSCDTD_CTRL1_t reg;
 
-	status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.ODR = odr;
+    status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.ODR = odr;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-	if (status != 0)
-		return status;
+    status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
+    if (status != 0)
+        return status;
 
-	return 0;
+    return 0;
 }
 
 
@@ -238,20 +238,20 @@ int8_t hscdtd_set_output_data_rate(hscdtd_device_t *p_dev,
  */
 int8_t hscdtd_set_state(hscdtd_device_t *p_dev, HSCDTD_CTRL1_FS_t state)
 {
-	int8_t status;
-	HSCDTD_CTRL1_t reg;
+    int8_t status;
+    HSCDTD_CTRL1_t reg;
 
-	status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.FS = state;
+    status = read_register(p_dev, HSCDTD_REG_CTRL1, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.FS = state;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
-	if (status != 0)
-		return status;
+    status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
+    if (status != 0)
+        return status;
 
-	return 0;
+    return 0;
 }
 
 
@@ -278,22 +278,22 @@ int8_t hscdtd_set_state(hscdtd_device_t *p_dev, HSCDTD_CTRL1_FS_t state)
  * @return 0 on success.
  */
 int8_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
-										   HSCDTD_CTRL2_FCO_t fco)
+                                           HSCDTD_CTRL2_FCO_t fco)
 {
-	int8_t status;
-	HSCDTD_CTRL2_t reg;
+    int8_t status;
+    HSCDTD_CTRL2_t reg;
 
-	status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.FCO = fco;
+    status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.FCO = fco;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status !=0)
-		return status;
-	
-	return 0;
+    status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status !=0)
+        return status;
+    
+    return 0;
 }
 
 
@@ -316,22 +316,22 @@ int8_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
  * @return 0 on success.
  */
 int8_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
-										  HSCDTD_CTRL2_AOR_t aor)
+                                          HSCDTD_CTRL2_AOR_t aor)
 {
-	int8_t status;
-	HSCDTD_CTRL2_t reg;
-	
-	status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.AOR = aor;
+    int8_t status;
+    HSCDTD_CTRL2_t reg;
+    
+    status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.AOR = aor;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status !=0)
-		return status;
-	
-	return 0;
+    status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status !=0)
+        return status;
+    
+    return 0;
 }
 
 
@@ -352,20 +352,20 @@ int8_t hscdtd_set_fifo_comparision_method(hscdtd_device_t *p_dev,
  */
 int8_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev, HSCDTD_CTRL2_FF_t ff)
 {
-	int8_t status;
-	HSCDTD_CTRL2_t reg;
-	
-	status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.FF = ff;
+    int8_t status;
+    HSCDTD_CTRL2_t reg;
+    
+    status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.FF = ff;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status !=0)
-		return status;
-	
-	return 0;
+    status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status !=0)
+        return status;
+    
+    return 0;
 }
 
 
@@ -386,22 +386,22 @@ int8_t hscdtd_set_fifo_enable(hscdtd_device_t *p_dev, HSCDTD_CTRL2_FF_t ff)
  * @return 0 on success.
  */
 int8_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
-										HSCDTD_CTRL2_DEN_t den)
+                                        HSCDTD_CTRL2_DEN_t den)
 {
-	int8_t status;
-	HSCDTD_CTRL2_t reg;
-	
-	status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.DEN = den;
+    int8_t status;
+    HSCDTD_CTRL2_t reg;
+    
+    status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.DEN = den;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status !=0)
-		return status;
-	
-	return 0;
+    status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status !=0)
+        return status;
+    
+    return 0;
 }
 
 
@@ -424,22 +424,22 @@ int8_t hscdtd_set_data_ready_pin_enable(hscdtd_device_t *p_dev,
  * @return 0 on success.
  */
 int8_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
-										  HSCDTD_CTRL2_DRP_t drp)
+                                          HSCDTD_CTRL2_DRP_t drp)
 {
-	int8_t status;
-	HSCDTD_CTRL2_t reg;
-	
-	status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.DRP = drp;
+    int8_t status;
+    HSCDTD_CTRL2_t reg;
+    
+    status = read_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.DRP = drp;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
-	if (status !=0)
-		return status;
-	
-	return 0;
+    status = write_register(p_dev, HSCDTD_REG_CTRL2, &reg);
+    if (status !=0)
+        return status;
+    
+    return 0;
 }
 
 
@@ -462,22 +462,22 @@ int8_t hscdtd_set_data_ready_pin_polarity(hscdtd_device_t *p_dev,
  * @return 0 on success.
  */
 int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
-							 HSCDTD_CTRL4_RS_t resolution)
+                             HSCDTD_CTRL4_RS_t resolution)
 {
-	int8_t status;
-	HSCDTD_CTRL4_t reg;
+    int8_t status;
+    HSCDTD_CTRL4_t reg;
 
-	status = read_register(p_dev, HSCDTD_REG_CTRL4, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.RS = resolution;
+    status = read_register(p_dev, HSCDTD_REG_CTRL4, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.RS = resolution;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL4, &reg);
-	if (status != 0)
-		return status;
+    status = write_register(p_dev, HSCDTD_REG_CTRL4, &reg);
+    if (status != 0)
+        return status;
 
-	return 0;
+    return 0;
 }
 
 /* --------------------------------------------------
@@ -494,18 +494,18 @@ int8_t hscdtd_set_resolution(hscdtd_device_t *p_dev,
  */
 int8_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev)
 {
-	int8_t status;
-	uint8_t reg;
-	
-	// The datasheet refers to the WIA regster
-	status = read_register(p_dev, HSCDTD_REG_WIA, &reg);
-	if (status != 0)
-		return status;
+    int8_t status;
+    uint8_t reg;
+    
+    // The datasheet refers to the WIA regster
+    status = read_register(p_dev, HSCDTD_REG_WIA, &reg);
+    if (status != 0)
+        return status;
 
-	// Value should be 0x49 according to the datashset.
-	if (reg != 0x49)
-		return -1;
-	return 0;
+    // Value should be 0x49 according to the datashset.
+    if (reg != 0x49)
+        return -1;
+    return 0;
 }
 
 /**
@@ -521,22 +521,22 @@ int8_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev)
  */
 int8_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
 {
-	int8_t status;
-	HSCDTD_CTRL3_t reg;
+    int8_t status;
+    HSCDTD_CTRL3_t reg;
 
-	status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-	if (status != 0)
-		return status;
-	
-	reg.OCL = 1;
+    status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
+    if (status != 0)
+        return status;
+    
+    reg.OCL = 1;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-	if (status != 0)
-		return status;
+    status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
+    if (status != 0)
+        return status;
 
-	// TODO(bob): Figure out if bit needs to set back.
+    // TODO(bob): Figure out if bit needs to set back.
 
-	return 0;
+    return 0;
 }
 
 
@@ -561,44 +561,44 @@ int8_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
  */
 int8_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
 {
-	int8_t status;
-	int8_t i;
-	HSCDTD_CTRL3_t reg;
-	HSCDTD_STAT_t stat;
+    int8_t status;
+    int8_t i;
+    HSCDTD_CTRL3_t reg;
+    HSCDTD_STAT_t stat;
 
-	status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-	if (status != 0)
-		return status;
+    status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
+    if (status != 0)
+        return status;
 
-	reg.TCS = 1;
+    reg.TCS = 1;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-	if (status != 0)
-		return status;
-	
-	status = -1;
-	// Attempt to check status for ~50ms (Duration does not really matter).
-	// If no temperature after that, something has gone wrong.
-	for (i = 0; i < 50; i++) {
-		t_sleep_ms(1);
+    status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
+    if (status != 0)
+        return status;
+    
+    status = -1;
+    // Attempt to check status for ~50ms (Duration does not really matter).
+    // If no temperature after that, something has gone wrong.
+    for (i = 0; i < 50; i++) {
+        t_sleep_ms(1);
 
-		// Read status register to check if temp data is ready.
-		status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
-		if (status != 0)
-			return status;
-		
-		if (stat.TRDY == 1) {
-			// The datasheet specifies that the bit is cleared after
-			// reading the TEMP register.
-			// We don't need the value here, so we don't need the return
-			// value.
-			hscdtd_read_temp(p_dev);
-			status = 0;
-			break;
-		}
-	}
+        // Read status register to check if temp data is ready.
+        status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
+        if (status != 0)
+            return status;
+        
+        if (stat.TRDY == 1) {
+            // The datasheet specifies that the bit is cleared after
+            // reading the TEMP register.
+            // We don't need the value here, so we don't need the return
+            // value.
+            hscdtd_read_temp(p_dev);
+            status = 0;
+            break;
+        }
+    }
 
-	return status;
+    return status;
 }
 
 /**
@@ -614,14 +614,14 @@ int8_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
  */
 int8_t hscdtd_read_temp(hscdtd_device_t *p_dev)
 {
-	int8_t temp;
+    int8_t temp;
 
-	// We can safely cast the uint8_t to a int8_t as the the value of the
-	// value is formatted as int8_t.
-	read_register(p_dev, HSCDTD_REG_TEMP, &temp);
-	// Ignore read register status.
+    // We can safely cast the uint8_t to a int8_t as the the value of the
+    // value is formatted as int8_t.
+    read_register(p_dev, HSCDTD_REG_TEMP, &temp);
+    // Ignore read register status.
 
-	return temp;
+    return temp;
 }
 
 
@@ -635,43 +635,43 @@ int8_t hscdtd_read_temp(hscdtd_device_t *p_dev)
  */
 int8_t hscdtd_self_test(hscdtd_device_t *p_dev)
 {
-	int8_t status;
-	HSCDTD_CTRL3_t reg;
-	uint8_t self_test_resp;
+    int8_t status;
+    HSCDTD_CTRL3_t reg;
+    uint8_t self_test_resp;
 
-	status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-	if (status != 0)
-		return status;
+    status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
+    if (status != 0)
+        return status;
 
-	reg.STC = 1;
+    reg.STC = 1;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-	if (status != 0)
-		return status;
-	
-	// Wait a bit for the result.
-	// This is not specified in the datasheet, but just to be safe.
-	t_sleep_ms(5);
+    status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
+    if (status != 0)
+        return status;
+    
+    // Wait a bit for the result.
+    // This is not specified in the datasheet, but just to be safe.
+    t_sleep_ms(5);
 
-	// According to page 6 of the datasheet value of STB should be 0xAA at
-	// first read.
-	status = read_register(p_dev, HSCDTD_REG_SELFTEST_RESP, &self_test_resp);
-	if (status != 0)
-		return status;
-	
-	if (self_test_resp != 0xAA)
-		return -20;  //TODO(bob): Replace with better error code
-	
-	// After reading again value should be 0x55.
-	status = read_register(p_dev, HSCDTD_REG_SELFTEST_RESP, &self_test_resp);
-	if (status != 0)
-		return status;
-	
-	if (self_test_resp != 0x55)
-		return -30;  //TODO(bob): Replace with better error code
+    // According to page 6 of the datasheet value of STB should be 0xAA at
+    // first read.
+    status = read_register(p_dev, HSCDTD_REG_SELFTEST_RESP, &self_test_resp);
+    if (status != 0)
+        return status;
+    
+    if (self_test_resp != 0xAA)
+        return -20;  //TODO(bob): Replace with better error code
+    
+    // After reading again value should be 0x55.
+    status = read_register(p_dev, HSCDTD_REG_SELFTEST_RESP, &self_test_resp);
+    if (status != 0)
+        return status;
+    
+    if (self_test_resp != 0x55)
+        return -30;  //TODO(bob): Replace with better error code
 
-	// If all those test passed, the test is successful.
-	return 0;
+    // If all those test passed, the test is successful.
+    return 0;
 }
 
 
@@ -688,30 +688,30 @@ int8_t hscdtd_self_test(hscdtd_device_t *p_dev)
  */
 int8_t hscdtd_soft_reset(hscdtd_device_t *p_dev)
 {
-	int8_t status;
-	HSCDTD_CTRL3_t reg;
+    int8_t status;
+    HSCDTD_CTRL3_t reg;
 
-	// The intention is to reset the device and its registers.
-	// So there is no need to first read the content of the
-	// register.
-	reg.SRST = 1;
-	status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-	if (status != 0)
-		return status;
+    // The intention is to reset the device and its registers.
+    // So there is no need to first read the content of the
+    // register.
+    reg.SRST = 1;
+    status = write_register(p_dev, HSCDTD_REG_CTRL3, &reg);
+    if (status != 0)
+        return status;
 
-	t_sleep_ms(5);  // Wait a bit for the chip to reset.
+    t_sleep_ms(5);  // Wait a bit for the chip to reset.
 
-	// Check if the reset went OK
-	status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
-	if (status != 0)
-		return status;
+    // Check if the reset went OK
+    status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
+    if (status != 0)
+        return status;
 
-	if (reg.SRST == 1) {
-		// If bit is set, something went wrong
-		return -1;
-	}
-	// Reset was successful
-	return 0;
+    if (reg.SRST == 1) {
+        // If bit is set, something went wrong
+        return -1;
+    }
+    // Reset was successful
+    return 0;
 }
 
 
@@ -724,51 +724,51 @@ int8_t hscdtd_soft_reset(hscdtd_device_t *p_dev)
  */
 int8_t hscdtd_measure(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data)
 {
-	int8_t status;
-	HSCDTD_STAT_t stat;
-	HSCDTD_CTRL3_t ctrl3;
-	int8_t i;
+    int8_t status;
+    HSCDTD_STAT_t stat;
+    HSCDTD_CTRL3_t ctrl3;
+    int8_t i;
 
-	if (!p_mag_data) {
-		return -1;  //TODO(bob): Replace with user error code
-	}
+    if (!p_mag_data) {
+        return -1;  //TODO(bob): Replace with user error code
+    }
 
-	// Read the status register to clear any status bits.
-	status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
-	// 'status' is the return value of the register read function, not the
-	// content of the register.
-	if (status != 0)
-		return status;
+    // Read the status register to clear any status bits.
+    status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
+    // 'status' is the return value of the register read function, not the
+    // content of the register.
+    if (status != 0)
+        return status;
 
-	// Start measurement
-	status = read_register(p_dev, HSCDTD_REG_CTRL3, &ctrl3);
-	if (status != 0)
-		return status;
-	
-	ctrl3.FRC = 1;
+    // Start measurement
+    status = read_register(p_dev, HSCDTD_REG_CTRL3, &ctrl3);
+    if (status != 0)
+        return status;
+    
+    ctrl3.FRC = 1;
 
-	status = write_register(p_dev, HSCDTD_REG_CTRL3, &ctrl3);
-	if (status != 0)
-		return status;
-	
-	// Wait until data is ready.
-	for (i = 0; i < 50; i++) {
-		status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
-		if (status != 0)
-			return status;
-		
-		if (stat.DRDY == 1)
-			break;
+    status = write_register(p_dev, HSCDTD_REG_CTRL3, &ctrl3);
+    if (status != 0)
+        return status;
+    
+    // Wait until data is ready.
+    for (i = 0; i < 50; i++) {
+        status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
+        if (status != 0)
+            return status;
+        
+        if (stat.DRDY == 1)
+            break;
 
-		t_sleep_ms(1);
-	}
+        t_sleep_ms(1);
+    }
 
-	if (stat.DRDY != 1)
-		return -5;  //TODO(bob): Replace with better error codes.
+    if (stat.DRDY != 1)
+        return -5;  //TODO(bob): Replace with better error codes.
 
-	// Use magneto read function to read the data into the pointer.
-	status = hscdtd_read_magnetodata(p_dev, p_mag_data);
-	return status;
+    // Use magneto read function to read the data into the pointer.
+    status = hscdtd_read_magnetodata(p_dev, p_mag_data);
+    return status;
 }
 
 
@@ -788,28 +788,28 @@ int8_t hscdtd_measure(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data)
  */
 int8_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev, hscdtd_mag_t *p_mag_data)
 {
-	int8_t status;
-	int8_t i;
-	uint8_t buf[6];
-	int16_t tmp;
-	float *mag_data;
+    int8_t status;
+    int8_t i;
+    uint8_t buf[6];
+    int16_t tmp;
+    float *mag_data;
 
-	if (!p_mag_data) {
-		return -1;  //TODO(bob): Replace with user error code
-	}
+    if (!p_mag_data) {
+        return -1;  //TODO(bob): Replace with user error code
+    }
 
-	mag_data = &p_mag_data->mag_x;
+    mag_data = &p_mag_data->mag_x;
 
-	// Read all mag data registers in one go.
-	status = read_register_multi(p_dev, HSCDTD_REG_XOUT_L, 6, buf);
-	if (status != 0)
-		return status;
+    // Read all mag data registers in one go.
+    status = read_register_multi(p_dev, HSCDTD_REG_XOUT_L, 6, buf);
+    if (status != 0)
+        return status;
 
-	for (i = 0; i < HSCDTD_NUM_AXIS; i++) {
-		// Each axis is formatted little endian, flip it and make it signed.
-		tmp = (int16_t) ((uint16_t)((buf[2 * i + 1] << 8) | (buf[2 * i])));
-		mag_data[i] = tmp * HSCDTD_UT_PER_LSB_15B;  // Assumes 15 bit value.
-	}
+    for (i = 0; i < HSCDTD_NUM_AXIS; i++) {
+        // Each axis is formatted little endian, flip it and make it signed.
+        tmp = (int16_t) ((uint16_t)((buf[2 * i + 1] << 8) | (buf[2 * i])));
+        mag_data[i] = tmp * HSCDTD_UT_PER_LSB_15B;  // Assumes 15 bit value.
+    }
 
-	return 0;
+    return 0;
 }
