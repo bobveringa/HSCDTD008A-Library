@@ -19,6 +19,12 @@ hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
     }
     p_dev->addr = addr;
 
+    // The force state is the default state for the device.
+    p_dev->state = HSCDTD_STATE_FORCE;
+
+    // Standby is the default mode.
+    p_dev->state = HSCDTD_MODE_STANDBY;
+
     return HSCDTD_STAT_OK;
 }
 
@@ -126,6 +132,9 @@ hscdtd_status_t hscdtd_set_mode(hscdtd_device_t *p_dev, hscdtd_mode_t mode)
     if (status != HSCDTD_STAT_OK)
         return status;
 
+    // All is ok now, update device mode.
+    p_dev->mode = mode;
+
     return HSCDTD_STAT_OK;
 }
 
@@ -199,6 +208,9 @@ hscdtd_status_t hscdtd_set_state(hscdtd_device_t *p_dev,
     status = write_register(p_dev, HSCDTD_REG_CTRL1, &reg);
     if (status != HSCDTD_STAT_OK)
         return status;
+
+    // All is ok now, we can update the device state.
+    p_dev->state = state;
 
     return HSCDTD_STAT_OK;
 }
@@ -461,10 +473,11 @@ hscdtd_status_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev)
 /**
  * @brief Start ADC offset calibration.
  *
- * Device must be in the force state.
- *
  * Refer to 'Offset calibration function' on page 9
  * of the datasheet for more information.
+ *
+ * Device state is temporarily changed to 'force' if
+ * inital state is not the 'force' state.
  *
  * @param p_dev Pointer to device struct.
  * @return hscdtd_status.
@@ -473,6 +486,12 @@ hscdtd_status_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
 {
     hscdtd_status_t status;
     HSCDTD_CTRL3_t reg;
+    hscdtd_state_t old_state = p_dev->state;
+
+    // Set the state to the force state.
+    status = hscdtd_set_state(p_dev, HSCDTD_STATE_FORCE);
+    if (status != HSCDTD_STAT_OK)
+        return status;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
     if (status != HSCDTD_STAT_OK)
@@ -484,7 +503,10 @@ hscdtd_status_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
     if (status != HSCDTD_STAT_OK)
         return status;
 
-    // TODO(bob): Figure out if bit needs to set back.
+    // Set old state back.
+    status = hscdtd_set_state(p_dev, old_state);
+    if (status != HSCDTD_STAT_OK)
+        return status;
 
     return HSCDTD_STAT_OK;
 }
@@ -501,7 +523,8 @@ hscdtd_status_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
  * is used for all future compensation, even if the
  * temperature changes.
  *
- * Device must be in the force state.
+ * Device state is temporarily changed to 'force' if
+ * inital state is not the 'force' state.
  *
  * Refer to 'Temperature Measurement and Compensation Function'
  * on page 9 of the datasheet for more information.
@@ -515,6 +538,12 @@ hscdtd_status_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
     int8_t i;
     HSCDTD_CTRL3_t reg;
     HSCDTD_STAT_t stat;
+    hscdtd_state_t old_state = p_dev->state;
+
+    // Set the state to the force state.
+    status = hscdtd_set_state(p_dev, HSCDTD_STATE_FORCE);
+    if (status != HSCDTD_STAT_OK)
+        return status;
 
     status = read_register(p_dev, HSCDTD_REG_CTRL3, &reg);
     if (status != HSCDTD_STAT_OK)
@@ -547,6 +576,14 @@ hscdtd_status_t hscdtd_temperature_compensation(hscdtd_device_t *p_dev)
             break;
         }
     }
+
+    if (status != HSCDTD_STAT_OK)
+        return status;
+
+    // Set old state back.
+    status = hscdtd_set_state(p_dev, old_state);
+    if (status != HSCDTD_STAT_OK)
+        return status;
 
     return status;
 }
@@ -761,6 +798,30 @@ hscdtd_status_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev,
         // Each axis is formatted little endian, flip it and make it signed.
         tmp = (int16_t) ((uint16_t)((buf[2 * i + 1] << 8) | (buf[2 * i])));
         mag_data[i] = tmp * HSCDTD_UT_PER_LSB_15B;  // Assumes 15 bit value.
+    }
+
+    return HSCDTD_STAT_OK;
+}
+
+
+/**
+ * @brief Check if there is magneto data ready.
+ *
+ * @param p_dev Pointer to device struct.
+ * @return hscdtd_status_t.
+ */
+hscdtd_status_t hscdtd_data_ready(hscdtd_device_t *p_dev)
+{
+    hscdtd_status_t status;
+    HSCDTD_STAT_t stat;
+
+    status = read_register(p_dev, HSCDTD_REG_STATUS, &stat);
+    if (status != 0) {
+        return status;
+    }
+
+    if (stat.DRDY != 1) {
+        return HSCDTD_STAT_NO_DATA;
     }
 
     return HSCDTD_STAT_OK;

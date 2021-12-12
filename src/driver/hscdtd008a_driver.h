@@ -101,6 +101,8 @@ typedef struct {
 
 typedef struct {
     uint8_t addr;
+    hscdtd_state_t state;
+    hscdtd_mode_t mode;
 } hscdtd_device_t;
 
 
@@ -162,6 +164,8 @@ hscdtd_status_t hscdtd_measure(hscdtd_device_t *p_dev,
 
 hscdtd_status_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev,
                                         hscdtd_mag_t *p_mag_data);
+
+hscdtd_status_t hscdtd_data_ready(hscdtd_device_t *p_dev);
 
 
 #ifdef __cplusplus
