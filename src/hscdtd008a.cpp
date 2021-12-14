@@ -38,7 +38,7 @@ hscdtd_status_t HSCDTD008A::initialize(void)
  *
  * @return hscdtd_status_t.
  */
-hscdtd_status_t HSCDTD008A::start_mag_measurement(void)
+hscdtd_status_t HSCDTD008A::start_measurement(void)
 {
     return hscdtd_measure(&this->device, &this->mag);
 }

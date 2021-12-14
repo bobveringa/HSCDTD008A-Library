@@ -1,0 +1,28 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+hscdtd_status_t		KEYWORD1
+HSCDTD008A			KEYWORD1
+hscdtd_mag_t		KEYWORD1
+hscdtd_device_t		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+start_measurement				KEYWORD2
+temperature_compensation		KEYWORD2
+offset_calibration				KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+HSCDTD_STAT_OK					LITERAL1
+HSCDTD_STAT_ERROR				LITERAL1
+HSCDTD_STAT_TRANSPORT_ERROR		LITERAL1
+HSCDTD_STAT_NO_DATA				LITERAL1
+HSCDTD_STAT_CHECK_FAILED		LITERAL1
+HSCDTD_STAT_UNKNOWN				LITERAL1
