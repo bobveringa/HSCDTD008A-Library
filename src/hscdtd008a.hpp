@@ -8,9 +8,9 @@ public:
     void begin(void);
     void begin(uint8_t device_addr);
     hscdtd_status_t initialize(void);
-    hscdtd_status_t start_measurement(void);
-    hscdtd_status_t temperature_compensation(void);
-    hscdtd_status_t offset_calibration(void);
+    hscdtd_status_t startMeasurement(void);
+    hscdtd_status_t temperatureCompensation(void);
+    hscdtd_status_t offsetCalibration(void);
 
     hscdtd_mag_t mag;
 

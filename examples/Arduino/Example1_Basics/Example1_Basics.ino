@@ -34,7 +34,7 @@ void setup() {
     while (true) { delay(1); }
   }
   // Compensate for temperature.
-  geomag.temperature_compensation();
+  geomag.temperatureCompensation();
 
 }
 
@@ -42,7 +42,7 @@ void loop() {
   hscdtd_status_t status;
 
   // Explicitly start a reading.
-  status = geomag.start_measurement();
+  status = geomag.startMeasurement();
   // If the status is OK then we can print the result.
   if (status == HSCDTD_STAT_OK) {
     Serial.print("X: ");

@@ -38,7 +38,7 @@ hscdtd_status_t HSCDTD008A::initialize(void)
  *
  * @return hscdtd_status_t.
  */
-hscdtd_status_t HSCDTD008A::start_measurement(void)
+hscdtd_status_t HSCDTD008A::startMeasurement(void)
 {
     return hscdtd_measure(&this->device, &this->mag);
 }
@@ -52,7 +52,7 @@ hscdtd_status_t HSCDTD008A::start_measurement(void)
  *
  * @return hscdtd_status_t.
  */
-hscdtd_status_t HSCDTD008A::temperature_compensation(void)
+hscdtd_status_t HSCDTD008A::temperatureCompensation(void)
 {
     return hscdtd_temperature_compensation(&this->device);
 }
@@ -65,7 +65,7 @@ hscdtd_status_t HSCDTD008A::temperature_compensation(void)
  *
  * @return hscdtd_status_t.
  */
-hscdtd_status_t HSCDTD008A::offset_calibration(void)
+hscdtd_status_t HSCDTD008A::offsetCalibration(void)
 {
     return hscdtd_offset_calibration(&this->device);
 }

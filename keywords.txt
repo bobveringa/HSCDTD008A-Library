@@ -11,9 +11,9 @@ hscdtd_device_t		KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-start_measurement				KEYWORD2
-temperature_compensation		KEYWORD2
-offset_calibration				KEYWORD2
+startMeasurement				KEYWORD2
+temperatureCompensation			KEYWORD2
+offsetCalibration				KEYWORD2
 
 
 #######################################
