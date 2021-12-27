@@ -3,7 +3,7 @@
  * HSCDTD008A Library Demo
  * Bob Veringa
  * Original Creation Date: 2021-12-14
- * 
+ *
  * Distributed as-is; no warranty is given.
  ***************************************************************/
 
@@ -59,6 +59,7 @@ void loop() {
 
     Serial.println("");
   } else {
+    // If it is not OK, then we don't print anything.
     Serial.println("Error occurred, unable to read sensor data.");
   }
   // Wait a bit before reading the next sample.
