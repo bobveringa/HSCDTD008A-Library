@@ -8,7 +8,7 @@
  ***************************************************************/
 
 #include <Arduino.h>
-#include "hscdtd008a.hpp"
+#include "hscdtd008a.h"
 
 
 // Create an instance of the sensor.
