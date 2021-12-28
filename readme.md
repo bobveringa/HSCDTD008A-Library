@@ -10,22 +10,21 @@ It is one of the cheapest geomagnetic / magneto sensors available and seems to b
 | Feature | Arduino | C Driver |
 |--|--|--|
 | Sensor initialization | ✔️ | ✔️ |
-| Stand-by mode| ❌ | ✔️  |
+| Stand-by mode| ✔️ | ✔️  |
 | Measurement Force State | ✔️ | ✔️ |
 | Measurement Normal State<sup>1</sup> | ❌ | ✔️ |
 | Temperature compensation | ✔️ | ✔️ |
 | Offset calibration | ✔️ | ✔️ |
 | Data Ready Pin| ❌ | ✔️  |
 | Offset Drift | ❌ | ❌  |
-| Self test| ❌<sup>2</sup> | ✔️  |
-| FIFO | ❌ | ❌<sup>3</sup> |
-| Soft reset| ❌ | ✔️  |
-| Data Resolution<sup>4</sup>| ❌ | ❌ |
+| Self test| ✔️> | ✔️  |
+| FIFO | ❌ | ❌<sup>2</sup> |
+| Soft reset| ✔️ | ✔️  |
+| Data Resolution<sup>3</sup>| ❌ | ❌ |
 
 1 - Normal state allows the user to read sensor data without explicitly calling start_measurement  
-2 - Self Test is performed during initialization (for both C driver and Arduino driver)  
-3 - The driver does define functions to configure FIFO configuration. However, more work is needed to properly support it.  
-4 - Driver is hard-coded to use 15bit resolution  
+2 - The driver does define functions to configure FIFO configuration. However, more work is needed to properly support it.  
+3 - Driver is hard-coded to use 15bit resolution  
 
 
 # Design

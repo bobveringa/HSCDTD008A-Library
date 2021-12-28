@@ -1,4 +1,4 @@
-#include "hscdtd008a.hpp"
+#include "hscdtd008a.h"
 
 
 /**
@@ -68,4 +68,89 @@ hscdtd_status_t HSCDTD008A::temperatureCompensation(void)
 hscdtd_status_t HSCDTD008A::offsetCalibration(void)
 {
     return hscdtd_offset_calibration(&this->device);
+}
+
+
+/**
+ * @brief Run a self test
+ *
+ * Run a self test to verify that the internals of the chp are working properly.
+ *
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::runSelfTest(void)
+{
+    return hscdtd_self_test(&this->device);
+}
+
+
+/**
+ * @brief Soft reset the chip
+ *
+ * Soft resetting the chip re-initializes all the regsiter values to their
+ * default values.
+ *
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::softReset(void)
+{
+    return hscdtd_soft_reset(&this->device);
+}
+
+
+/**
+ * @brief Put the chip in stand-by mode
+ *
+ * Putting the chip in stand-by mode significantly reduces the energy usage
+ * of the device. Register reading and writing is still possible.
+ *
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::setStandby(void)
+{
+    return hscdtd_set_mode(&this->device, HSCDTD_MODE_STANDBY);
+}
+
+
+/**
+ * @brief Put the chip in active mode
+ *
+ * Putting the chip in active mode is required for chip operations such as:
+ *  1. Reading Sensor Data
+ *  2. Performing Offset Calibration
+ *  3. Performing Temperature Compenstation
+ *
+ * Chip uses more power in active mode.
+ *
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::setActive(void)
+{
+    return hscdtd_set_mode(&this->device, HSCDTD_MODE_ACTIVE);
+}
+
+
+/**
+ * @brief Check if data is ready
+ *
+ * Check if data is available for reading.
+ *
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::isDataReady(void)
+{
+    return hscdtd_data_ready(&this->device);
+}
+
+/**
+ * @brief Get the temperature value.
+ *
+ * Get the temperature value after temperature compensation. Only retrieves
+ * the value from the register, does not start a temperature measurement.
+ *
+ * @return int, temperature in degrees (C)
+ */
+int HSCDTD008A::getTemperature(void)
+{
+    return hscdtd_read_temp(&this->device);
 }

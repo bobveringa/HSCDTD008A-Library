@@ -14,6 +14,12 @@ hscdtd_device_t		KEYWORD1
 startMeasurement				KEYWORD2
 temperatureCompensation			KEYWORD2
 offsetCalibration				KEYWORD2
+runSelfTest						KEYWORD2
+softReset						KEYWORD2
+setStandby						KEYWORD2
+setActive						KEYWORD2
+isDataReady						KEYWORD2
+getTemperature					KEYWORD2
 
 
 #######################################

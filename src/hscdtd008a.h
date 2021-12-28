@@ -11,6 +11,14 @@ public:
     hscdtd_status_t startMeasurement(void);
     hscdtd_status_t temperatureCompensation(void);
     hscdtd_status_t offsetCalibration(void);
+    hscdtd_status_t runSelfTest(void);
+    hscdtd_status_t softReset(void);
+    hscdtd_status_t setStandby(void);
+    hscdtd_status_t setActive(void);
+    hscdtd_status_t isDataReady(void);
+
+    int getTemperature(void);
+
 
     hscdtd_mag_t mag;
 
