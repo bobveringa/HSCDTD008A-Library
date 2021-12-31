@@ -131,6 +131,28 @@ hscdtd_status_t HSCDTD008A::setActive(void)
 
 
 /**
+ * @brief Set the device state into the force state
+ *
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::setStateForce(void)
+{
+    return hscdtd_set_state(&this->device, HSCDTD_STATE_FORCE);
+}
+
+
+/**
+ * @brief Set the device state into the normal state
+ *
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::setStateNormal(void)
+{
+    return hscdtd_set_state(&this->device, HSCDTD_STATE_NORMAL);
+}
+
+
+/**
  * @brief Check if data is ready
  *
  * Check if data is available for reading.
@@ -140,6 +162,31 @@ hscdtd_status_t HSCDTD008A::setActive(void)
 hscdtd_status_t HSCDTD008A::isDataReady(void)
 {
     return hscdtd_data_ready(&this->device);
+}
+
+
+/**
+ * @brief Configure the output data rate.
+ *
+ * Configure the output date rate of the device in the Normal State.
+ *
+ * @param odr Valid value for frequency.
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::configureOutputDataRate(hscdtd_odr_t odr)
+{
+    return hscdtd_set_output_data_rate(&this->device, odr);
+}
+
+
+/**
+ * @brief Get the Mag Data and store it in the class object.
+ *
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::retrieveMagData(void)
+{
+    return hscdtd_read_magnetodata(&this->device, &this->mag);
 }
 
 /**
