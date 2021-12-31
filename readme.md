@@ -12,12 +12,12 @@ It is one of the cheapest geomagnetic / magneto sensors available and seems to b
 | Sensor initialization | ✔️ | ✔️ |
 | Stand-by mode| ✔️ | ✔️  |
 | Measurement Force State | ✔️ | ✔️ |
-| Measurement Normal State<sup>1</sup> | ❌ | ✔️ |
+| Measurement Normal State<sup>1</sup> | ✔️ | ✔️ |
 | Temperature compensation | ✔️ | ✔️ |
 | Offset calibration | ✔️ | ✔️ |
 | Data Ready Pin| ❌ | ✔️  |
 | Offset Drift | ❌ | ❌  |
-| Self test| ✔️> | ✔️  |
+| Self test| ✔️ | ✔️  |
 | FIFO | ❌ | ❌<sup>2</sup> |
 | Soft reset| ✔️ | ✔️  |
 | Data Resolution<sup>3</sup>| ❌ | ❌ |
