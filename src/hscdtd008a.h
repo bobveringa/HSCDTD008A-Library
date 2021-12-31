@@ -15,7 +15,11 @@ public:
     hscdtd_status_t softReset(void);
     hscdtd_status_t setStandby(void);
     hscdtd_status_t setActive(void);
+    hscdtd_status_t setStateForce(void);
+    hscdtd_status_t setStateNormal(void);
     hscdtd_status_t isDataReady(void);
+    hscdtd_status_t configureOutputDataRate(hscdtd_odr_t odr);
+    hscdtd_status_t retrieveMagData(void);
 
     int getTemperature(void);
 
