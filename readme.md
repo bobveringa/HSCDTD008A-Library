@@ -16,7 +16,7 @@ It is one of the cheapest geomagnetic / magneto sensors available and seems to b
 | Temperature compensation | ✔️ | ✔️ |
 | Offset calibration | ✔️ | ✔️ |
 | Data Ready Pin| ❌ | ✔️  |
-| Offset Drift | ❌ | ❌  |
+| Offset Drift | ✔️ | ✔️  |
 | Self test| ✔️ | ✔️  |
 | FIFO | ❌ | ❌<sup>2</sup> |
 | Soft reset| ✔️ | ✔️  |

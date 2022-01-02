@@ -826,3 +826,49 @@ hscdtd_status_t hscdtd_data_ready(hscdtd_device_t *p_dev)
 
     return HSCDTD_STAT_OK;
 }
+
+
+/**
+ * @brief Set a fixed offset for the magneto values.
+ *
+ * @param p_dev Pointer to device struct.
+ * @param x_off Offset for x-axis.
+ * @param y_off Offset for y-axis.
+ * @param z_off Offset for z-axis.
+ *
+ * @return hscdtd_status_t 
+ */
+hscdtd_status_t hscdtd_set_offset(hscdtd_device_t *p_dev,
+                                  float x_off, float y_off, float z_off)
+{
+    uint16_t tmp_off;
+    uint8_t offset_map[6];
+    int8_t i;
+
+    // Use a variable to make it easier to support 14bit in the future.
+    float max_offset = HSCDTD_15BIT_MAX_VALUE;
+
+    // The sensor substracts the offset from the sensor value.
+    // This doesn't really make sense from a user perspective. So the
+    // negative version of the user supplied offset is applied.
+    // Put those in a array to simplify conversion.
+    float offsets[] = {-x_off, -y_off, -z_off};
+
+    // Loop over the values.
+    for (i = 0; i < 3; i++) {
+        // Check if the offset value is valid.
+        if (offsets[i] > max_offset || offsets[i] < -max_offset) {
+            // If the value is larger than the max value the behavior is 
+            // undefined. Best to avoid it.
+            return HSCDTD_STAT_USER_ERROR;
+        }
+        // Convert to uin16_t
+        tmp_off = (uint16_t) (offsets[i] / HSCDTD_UT_PER_LSB_15B);
+        // Write the values to the offset map
+        offset_map[2 * i] = (uint8_t) (tmp_off & 0xFF);
+        offset_map[2 * i + 1] = (uint8_t) ((tmp_off >> 8) & 0xFF);
+    }
+
+    // Write the offset map to the sensor.
+    return write_register_multi(p_dev, HSCDTD_REG_OFFSET_X_L, 6, &offset_map);
+}

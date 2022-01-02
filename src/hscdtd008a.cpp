@@ -10,6 +10,7 @@ void HSCDTD008A::begin(void)
     begin(HSCDTD_DEFAULT_ADDR);
 }
 
+
 /**
  * @brief Additional enable function in case I2C address is different
  * than the default.
@@ -188,6 +189,22 @@ hscdtd_status_t HSCDTD008A::retrieveMagData(void)
 {
     return hscdtd_read_magnetodata(&this->device, &this->mag);
 }
+
+
+/**
+ * @brief Apply an offset to the sensor readings
+ *
+ * @param x_off x Offset in uT
+ * @param y_off y Offset in uT
+ * @param z_off z Offset in Ut
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::applyOffsetDrift(float x_off, float y_off,
+                                             float z_off)
+{
+    return hscdtd_set_offset(&this->device, x_off, y_off, z_off);
+}
+
 
 /**
  * @brief Get the temperature value.

@@ -14,6 +14,9 @@
 #define HSCDTD_DEFAULT_ADDR             0x0C
 #define HSCDTD_ALT_ADDR                 0x0F
 
+// Some useful numbers for general operations
+#define HSCDTD_15BIT_MAX_VALUE          2457.6
+
 // If we are compiling for
 #ifdef __cplusplus
 extern "C"
@@ -112,7 +115,8 @@ typedef enum {
     HSCDTD_STAT_TRANSPORT_ERROR,
     HSCDTD_STAT_NO_DATA,
     HSCDTD_STAT_CHECK_FAILED,
-    HSCDTD_STAT_UNKNOWN
+    HSCDTD_STAT_UNKNOWN,
+    HSCDTD_STAT_USER_ERROR,
 } hscdtd_status_t;
 
 
@@ -166,6 +170,9 @@ hscdtd_status_t hscdtd_read_magnetodata(hscdtd_device_t *p_dev,
                                         hscdtd_mag_t *p_mag_data);
 
 hscdtd_status_t hscdtd_data_ready(hscdtd_device_t *p_dev);
+
+hscdtd_status_t hscdtd_set_offset(hscdtd_device_t *p_dev,
+                                  float x_off, float y_off, float z_off);
 
 
 #ifdef __cplusplus
