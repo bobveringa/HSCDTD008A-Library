@@ -23,7 +23,7 @@ hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
     p_dev->state = HSCDTD_STATE_FORCE;
 
     // Standby is the default mode.
-    p_dev->state = HSCDTD_MODE_STANDBY;
+    p_dev->mode = HSCDTD_MODE_STANDBY;
 
     return HSCDTD_STAT_OK;
 }
@@ -72,6 +72,11 @@ hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev)
 
     // Check Who I Am
     status = hscdtd_who_i_am_check(p_dev);
+    if (status != HSCDTD_STAT_OK)
+        return status;
+    
+    // Explicitly set the device to force state
+    status = hscdtd_set_state(p_dev, HSCDTD_STATE_FORCE);
     if (status != HSCDTD_STAT_OK)
         return status;
 
