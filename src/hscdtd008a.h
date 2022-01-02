@@ -20,6 +20,7 @@ public:
     hscdtd_status_t isDataReady(void);
     hscdtd_status_t configureOutputDataRate(hscdtd_odr_t odr);
     hscdtd_status_t retrieveMagData(void);
+    hscdtd_status_t applyOffsetDrift(float x_off, float y_off, float z_off);
 
     int getTemperature(void);
 
