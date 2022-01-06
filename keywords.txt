@@ -24,6 +24,8 @@ configureOutputDataRate		KEYWORD2
 retrieveMagData			KEYWORD2
 applyOffsetDrift		KEYWORD2
 getTemperature			KEYWORD2
+setDataReadyPinEnabledStatus	KEYWORD2
+setDataReadyPinPolarity		KEYWORD2
 
 
 #######################################

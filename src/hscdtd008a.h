@@ -21,6 +21,8 @@ public:
     hscdtd_status_t configureOutputDataRate(hscdtd_odr_t odr);
     hscdtd_status_t retrieveMagData(void);
     hscdtd_status_t applyOffsetDrift(float x_off, float y_off, float z_off);
+    hscdtd_status_t setDataReadyPinEnabledStatus(hscdtd_den_t den);
+    hscdtd_status_t setDataReadyPinPolarity(hscdtd_drp_t drp);
 
     int getTemperature(void);
 
