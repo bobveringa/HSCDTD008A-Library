@@ -2,7 +2,7 @@
  * Example4_Data_Ready_Pin.ino
  * HSCDTD008A Library Demo
  * Bob Veringa
- * Original Creation Date: 2021-01-07
+ * Original Creation Date: 2021-01-16
  *
  * Distributed as-is; no warranty is given.
  ***************************************************************/
@@ -12,7 +12,7 @@
 
 
 // The pin DRDY is connected to on the Arduino.
-// It is required to connect a pull down resistor to this line.
+// It is required to connect a pull down resistor (between 1k and 4k) to this line.
 const int data_ready_pin = 2;
 
 // Create an instance of the sensor.
@@ -27,7 +27,7 @@ void setup() {
   geomag.begin();
   // If you know the I2C address is different than in the provided
   // data sheet. Uncomment the line below, and configure the address.
-  geomag.begin(0x0F);
+  // geomag.begin(0x0F);
 
   // Initialize the hardware.
   status = geomag.initialize();
@@ -59,7 +59,7 @@ void setup() {
 void loop() {
   int status;
 
-  // Make sure a pull down resistor is connected to the data ready line.
+  // Make sure a pull down resistor (between 1k and 4k) is connected to the data ready line.
   // Check if data is ready by digital read.
   status = digitalRead(data_ready_pin);
 
