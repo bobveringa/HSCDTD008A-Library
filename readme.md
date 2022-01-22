@@ -15,7 +15,7 @@ It is one of the cheapest geomagnetic / magneto sensors available and seems to b
 | Measurement Normal State<sup>1</sup> | ✔️ | ✔️ |
 | Temperature compensation | ✔️ | ✔️ |
 | Offset calibration | ✔️ | ✔️ |
-| Data Ready Pin| ❌ | ✔️  |
+| Data Ready Pin| ✔️ | ✔️  |
 | Offset Drift | ✔️ | ✔️  |
 | Self test| ✔️ | ✔️  |
 | FIFO | ❌ | ❌<sup>2</sup> |

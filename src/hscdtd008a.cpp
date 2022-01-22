@@ -207,6 +207,36 @@ hscdtd_status_t HSCDTD008A::applyOffsetDrift(float x_off, float y_off,
 
 
 /**
+ * @brief Set the Data Ready Pin Enabled Status
+ *
+ * @param den
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::setDataReadyPinEnabledStatus(hscdtd_den_t den)
+{
+    return hscdtd_set_data_ready_pin_enable(&this->device, den);
+}
+
+
+/**
+ * @brief Set the Data Ready Pin Polarity
+ *
+ * The polarity can be configured as:
+ * - Active LOW
+ * - Active HIGH (Default).
+ * 
+ * This option is only available if Data Ready Pin output is enabled.
+ *
+ * @param drp
+ * @return hscdtd_status_t
+ */
+hscdtd_status_t HSCDTD008A::setDataReadyPinPolarity(hscdtd_drp_t drp)
+{
+    return hscdtd_set_data_ready_pin_polarity(&this->device, drp);
+}
+
+
+/**
  * @brief Get the temperature value.
  *
  * Get the temperature value after temperature compensation. Only retrieves
