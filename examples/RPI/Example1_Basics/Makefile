@@ -1,7 +1,7 @@
-.DEFAULT_GOAL :=Example1_Basic 
+.DEFAULT_GOAL :=Example1_Basics 
 INCLUDE=../../../src ../../../src/driver
 
-Example1_Basic: Example1_Basics.o hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
+Example1_Basics: Example1_Basics.o hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
 	g++ -o Example1_Basics Example1_Basics.o hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
 
 Example1_Basics.o: Example1_Basics.cpp 
@@ -20,4 +20,4 @@ platform_rpi.o: ../../../src/driver/platform_rpi.cpp
 	g++ -I$(INCLUDE) -c -o  platform_rpi.o ../../../src/driver/platform_rpi.cpp
 
 clean:
-	rm -f *.o Example1_Basic 
+	rm -f *.o Example1_Basics 
