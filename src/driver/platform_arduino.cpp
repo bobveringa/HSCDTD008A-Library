@@ -1,3 +1,4 @@
+#ifdef ARDUINO
 #include "platform.h"
 
 #include <Arduino.h>
@@ -78,3 +79,5 @@ void t_sleep_ms(uint32_t duration_ms)
 {
     delay(duration_ms);
 }
+
+#endif //ARDUINO
