@@ -1,0 +1,11 @@
+name: RPI CI
+
+on: [push, pull_request]
+
+jobs:
+  rpi_ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd ./examples/RPI/Example1_Basics/; make all   

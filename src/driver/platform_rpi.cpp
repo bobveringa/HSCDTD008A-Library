@@ -38,7 +38,7 @@ int8_t t_open(void)
         return 1;
        }
     }   
-    return (fd<0);
+    return (fd < 0);
 }
 
 int8_t t_read_register(uint8_t addr,
@@ -52,13 +52,15 @@ int8_t t_read_register(uint8_t addr,
     struct i2c_msg msgs[2];
     struct i2c_rdwr_ioctl_data msgset[1];
 
+    // prepare I2C message to select register to be read
     msgs[0].addr = addr;
     msgs[0].flags = 0;
     msgs[0].len = 1;
     msgs[0].buf = outbuf;
  
     outbuf[0] = reg;
-    
+   
+    // prepare I2C to read selected register  
     msgs[1].addr = addr;
     msgs[1].flags = I2C_M_RD | I2C_M_NOSTART;
     msgs[1].len = length;
@@ -67,22 +69,26 @@ int8_t t_read_register(uint8_t addr,
     msgset[0].msgs = msgs;
     msgset[0].nmsgs = 2;
 
-
+    // i2c message can have up to 32 bytes
     if (length >= 32) 
       return HSCDTD_STAT_ERROR; 
-//    printf("t_read_register: reg=0x%x\n", reg);
+    
+    // debug output
+    //    printf("t_read_register: reg=0x%x\n", reg);
 
+    // hand over prepared messages to the kernel via ioctl driver for execution
     *p_buffer = 0;
     if (ioctl(fd, I2C_RDWR, &msgset) < 0) {
         printf("ioctl(I2C_RDWR) in i2c_read");
         printf("t_read_register: Error writing to i2c device: %s\n", 
   		strerror(errno));
-        printf("t_read_register: length=%d, status =%d", length,status);
+        printf("t_read_register: length=%d, status =%d", length, status);
 
         return HSCDTD_STAT_ERROR;
     }
 
-    strncpy((char*)p_buffer,(char*)inbuf,length); 
+    //copy received bytes into buffer
+    strncpy((char*)p_buffer, (char*)inbuf, length); 
     return HSCDTD_STAT_OK;
 }
 
@@ -101,7 +107,8 @@ int8_t t_write_register(uint8_t addr,
       return HSCDTD_STAT_ERROR; 
 
     strncpy((char*)buffer+1, (char*) p_buffer, length);
-    
+   
+    // prepare i2c write message 
     msgs[0].addr = addr;
     msgs[0].flags = 0;
     msgs[0].len = length+1;
@@ -110,11 +117,12 @@ int8_t t_write_register(uint8_t addr,
     msgset[0].msgs = msgs;
     msgset[0].nmsgs = 1;
 
+    // hand over prepared messages to the kernel driver via ioctl for execution
     if (ioctl(fd, I2C_RDWR, &msgset) < 0)
     {
         printf("t_write_register: ioctl(I2C_RDWR) in i2c_write");
-	printf("Error writing to i2c device: %s.\nstatus=%d,length=%d\n", 
-		strerror(errno),status, length);
+	printf("Error writing to i2c device: %s.\nstatus=%d, length=%d\n", 
+		strerror(errno), status, length);
         return HSCDTD_STAT_ERROR;
     }
 
