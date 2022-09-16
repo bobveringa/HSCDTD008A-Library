@@ -8,4 +8,4 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: cd ./examples/RPI/Example1_Basics/; make all   
+      - run: cd ./examples/RPI/Example1_Basics/; make
