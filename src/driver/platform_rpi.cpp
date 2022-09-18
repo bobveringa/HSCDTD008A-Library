@@ -8,7 +8,7 @@
  * Distributed as-is; no warranty is given.
  ***************************************************************/
 
-
+#ifdef RPI
 #include "platform.h"
 #include "hscdtd008a_driver.h"
 #include <stdio.h>
@@ -46,7 +46,6 @@ int8_t t_read_register(uint8_t addr,
                        uint8_t length,
                        uint8_t *p_buffer)
 {
-    int8_t status;
     uint8_t inbuf[32];
     uint8_t outbuf[1];
     struct i2c_msg msgs[2];
@@ -82,7 +81,7 @@ int8_t t_read_register(uint8_t addr,
         printf("ioctl(I2C_RDWR) in i2c_read");
         printf("t_read_register: Error writing to i2c device: %s\n", 
   		strerror(errno));
-        printf("t_read_register: length=%d, status =%d", length, status);
+        printf("t_read_register: addr=0x%x, reg=0x%x, length=%d", addr, reg, length);
 
         return HSCDTD_STAT_ERROR;
     }
@@ -97,7 +96,6 @@ int8_t t_write_register(uint8_t addr,
                         uint8_t length,
                         uint8_t *p_buffer)
 {
-    int8_t status;
     uint8_t buffer[32];
     struct i2c_msg msgs[1];
     struct i2c_rdwr_ioctl_data msgset[1];
@@ -121,8 +119,9 @@ int8_t t_write_register(uint8_t addr,
     if (ioctl(fd, I2C_RDWR, &msgset) < 0)
     {
         printf("t_write_register: ioctl(I2C_RDWR) in i2c_write");
-	printf("Error writing to i2c device: %s.\nstatus=%d, length=%d\n", 
-		strerror(errno), status, length);
+	printf("Error writing to i2c device: %s.\n", strerror(errno));
+	printf("t_write_register: addr=0x%x, reg=0x%x, length=%d", addr, reg, length);
+
         return HSCDTD_STAT_ERROR;
     }
 
@@ -146,3 +145,4 @@ void t_sleep_ms(uint32_t duration_ms)
 {
     usleep(duration_ms*1000);
 }
+#endif
