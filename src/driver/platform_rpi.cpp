@@ -81,13 +81,13 @@ int8_t t_read_register(uint8_t addr,
         printf("ioctl(I2C_RDWR) in i2c_read");
         printf("t_read_register: Error writing to i2c device: %s\n", 
   		strerror(errno));
-        printf("t_read_register: addr=0x%x, reg=0x%x, length=%d", addr, reg, length);
+        printf("t_read_register: addr=0x%x, reg=0x%x, length=%d \n", addr, reg, length);
 
         return HSCDTD_STAT_ERROR;
     }
 
     //copy received bytes into buffer
-    strncpy((char*)p_buffer, (char*)inbuf, length); 
+    strncpy((char*) p_buffer, (char*) inbuf, length); 
     return HSCDTD_STAT_OK;
 }
 
@@ -120,7 +120,7 @@ int8_t t_write_register(uint8_t addr,
     {
         printf("t_write_register: ioctl(I2C_RDWR) in i2c_write");
 	printf("Error writing to i2c device: %s.\n", strerror(errno));
-	printf("t_write_register: addr=0x%x, reg=0x%x, length=%d", addr, reg, length);
+	printf("t_write_register: addr=0x%x, reg=0x%x, length=%d \n", addr, reg, length);
 
         return HSCDTD_STAT_ERROR;
     }
@@ -143,6 +143,6 @@ int8_t t_close(void)
 
 void t_sleep_ms(uint32_t duration_ms)
 {
-    usleep(duration_ms*1000);
+    usleep(duration_ms * 1000);
 }
 #endif
