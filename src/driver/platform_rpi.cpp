@@ -70,7 +70,7 @@ int8_t t_read_register(uint8_t addr,
 
     // i2c message can have up to 32 bytes
     if (length >= 32) 
-      return HSCDTD_STAT_ERROR; 
+      return -2; 
     
     // debug output
     //    printf("t_read_register: reg=0x%x\n", reg);
@@ -83,12 +83,12 @@ int8_t t_read_register(uint8_t addr,
   		strerror(errno));
         printf("t_read_register: addr=0x%x, reg=0x%x, length=%d \n", addr, reg, length);
 
-        return HSCDTD_STAT_ERROR;
+        return -1;
     }
 
     //copy received bytes into buffer
     strncpy((char*) p_buffer, (char*) inbuf, length); 
-    return HSCDTD_STAT_OK;
+    return 0;
 }
 
 int8_t t_write_register(uint8_t addr,
@@ -102,7 +102,7 @@ int8_t t_write_register(uint8_t addr,
 
     buffer[0] = reg;
     if (length >= 31) 
-      return HSCDTD_STAT_ERROR; 
+      return -2; 
 
     strncpy((char*)buffer+1, (char*) p_buffer, length);
    
@@ -122,22 +122,22 @@ int8_t t_write_register(uint8_t addr,
 	printf("Error writing to i2c device: %s.\n", strerror(errno));
 	printf("t_write_register: addr=0x%x, reg=0x%x, length=%d \n", addr, reg, length);
 
-        return HSCDTD_STAT_ERROR;
+        return -1;
     }
 
-    return HSCDTD_STAT_OK;
+    return 0;
 }
 
 int8_t t_flush(void)
 {
-    return HSCDTD_STAT_OK;
+    return 0;
 }
 
 
 int8_t t_close(void)
 {
     close(fd);
-    return HSCDTD_STAT_OK;
+    return 0;
 }
 
 
