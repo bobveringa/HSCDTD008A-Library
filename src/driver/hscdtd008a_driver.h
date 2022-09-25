@@ -27,10 +27,7 @@ extern "C"
  * CTRL1 Settings
  */
 
-typedef enum {
-    HSCDTD_MODE_STANDBY = 0b00,
-    HSCDTD_MODE_ACTIVE = 0b01,
-} hscdtd_mode_t;
+#include "common.h"
 
 typedef enum {
     HSCDTD_ODR_0_5HZ = 0b00,
@@ -40,10 +37,7 @@ typedef enum {
 } hscdtd_odr_t;
 
 
-typedef enum {
-    HSCDTD_STATE_NORMAL = 0b00,
-    HSCDTD_STATE_FORCE = 0b01,
-} hscdtd_state_t;
+
 
 
 /* --------------------------------------------------
@@ -102,12 +96,6 @@ typedef struct {
 } hscdtd_mag_t;
 
 
-typedef struct {
-    uint8_t addr;
-    hscdtd_state_t state;
-    hscdtd_mode_t mode;
-} hscdtd_device_t;
-
 
 typedef enum {
     HSCDTD_STAT_OK = 0x00,
@@ -121,7 +109,7 @@ typedef enum {
 
 
 hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
-                                                uint8_t addr);
+                                                uint8_t addr, char *device);
 
 hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev);
 

@@ -2,6 +2,9 @@
 INCLUDE=../../../src ../../../src/driver
 FLAGS = -DRPI -Wall -c
 
+all: Example1_Basics
+
+
 Example1_Basics: Example1_Basics.o hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
 	g++ -o Example1_Basics Example1_Basics.o hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
 

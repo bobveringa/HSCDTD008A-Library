@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <math.h>
 
+
 // Create an instance of the sensor.
 HSCDTD008A geomag;
 
@@ -21,10 +22,10 @@ HSCDTD008A geomag;
 void setup() {
   hscdtd_status_t status;
   
-  geomag.begin();
+  //geomag.begin();
   // If you know the I2C address is different than in the provided
   // data sheet. Uncomment the line below, and configure the address.
-  geomag.begin(0x0F);
+  geomag.begin(0x0F,(char*)"/dev/i2c-1");
 
   // Initialize the hardware.
   status = geomag.initialize();

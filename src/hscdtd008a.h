@@ -2,11 +2,13 @@
 #define __HSCDTD008A__
 
 #include "driver/hscdtd008a_driver.h"
+#include <cstddef>
 
 class HSCDTD008A {
 public:
     void begin(void);
     void begin(uint8_t device_addr);
+    void begin(uint8_t device_addr,char* device);
     hscdtd_status_t initialize(void);
     hscdtd_status_t startMeasurement(void);
     hscdtd_status_t temperatureCompensation(void);

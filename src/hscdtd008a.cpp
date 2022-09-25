@@ -19,9 +19,13 @@ void HSCDTD008A::begin(void)
  */
 void HSCDTD008A::begin(uint8_t device_addr)
 {
-    hscdtd_configure_virtual_device(&this->device, device_addr);
+    hscdtd_configure_virtual_device(&this->device, device_addr,NULL);
 }
 
+void HSCDTD008A::begin(uint8_t device_addr,char* device)
+{
+	hscdtd_configure_virtual_device(&this->device, device_addr, device);
+}
 
 /**
  * @brief Initialize the device.

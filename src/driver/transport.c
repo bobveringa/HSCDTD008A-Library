@@ -1,4 +1,5 @@
 #include "transport.h"
+#include "common.h"
 
 /**
  * @brief Read a single register from the sensor.
@@ -39,7 +40,7 @@ hscdtd_status_t read_register_multi(hscdtd_device_t *p_dev,
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }
 
-    status = t_read_register(p_dev->addr, reg, length, (uint8_t* ) p_buffer);
+    status = t_read_register( reg, length, (uint8_t* ) p_buffer, p_dev);
     if (status != 0) {
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }
@@ -84,7 +85,7 @@ hscdtd_status_t write_register_multi(hscdtd_device_t *p_dev,
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }
 
-    status = t_write_register(p_dev->addr, reg, length, (uint8_t* ) p_buffer);
+    status = t_write_register( reg, length, (uint8_t* ) p_buffer, p_dev);
     if (status != 0) {
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }
