@@ -33,3 +33,7 @@ This driver is written in C, with a wrapper for C++ so that it can be used in Ar
 For this reason, all logic operations are implemented in C, with the C++ layer only changing up the interface, but not implementing any logic. The goal is to keep this separation even for features added in the future.
 
 In `platform.h`functions are defined for I2C communication as well as for system sleep. This allows the driver to be used on non Arduino platforms.
+
+# Supported platforms
+## Arduino
+The Arduino platform is natively supported, and the library can be downloaded through the Arduino Library manager ([Library page](https://www.arduino.cc/reference/en/libraries/hscdtd008a/)). All Arduino platforms should be supported. However, support has only been verified for an Arduino Uno, if you find that the library does not work for a board or series of boards, please raise an issue on GitHub.

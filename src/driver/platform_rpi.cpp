@@ -20,8 +20,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <linux/i2c-dev.h>
-#define I2C_ADDR 0x0f
-#define I2C_DEVICE "/dev/i2c-1"
 #ifndef I2C_M_RD
 #include <linux/i2c.h>
 #endif
@@ -45,7 +43,7 @@ int8_t t_open(hscdtd_device_t *p_dev)
 int8_t t_read_register(uint8_t reg,
                        uint8_t length,
                        uint8_t *p_buffer,
-					   hscdtd_device_t *p_dev)
+			hscdtd_device_t *p_dev)
 {
     uint8_t inbuf[32];
     uint8_t outbuf[1];
@@ -95,7 +93,7 @@ int8_t t_read_register(uint8_t reg,
 int8_t t_write_register(uint8_t reg,
                         uint8_t length,
                         uint8_t *p_buffer,
-						hscdtd_device_t *p_dev)
+			hscdtd_device_t *p_dev)
 {
     uint8_t buffer[32];
     struct i2c_msg msgs[1];

@@ -1,6 +1,9 @@
 #include "transport.h"
 #include "common.h"
 
+// Read limit is equal to the number of available registers.
+#define HSCDTD_TRANSPORT_READ_LIMIT 0x32
+
 /**
  * @brief Read a single register from the sensor.
  *
@@ -41,6 +44,11 @@ hscdtd_status_t read_register_multi(hscdtd_device_t *p_dev,
     }
 
     status = t_read_register( reg, length, (uint8_t* ) p_buffer, p_dev);
+    // Check if the read request does not exceed the chip's limits.
+    if (length > HSCDTD_TRANSPORT_READ_LIMIT) {
+        return HSCDTD_STAT_USER_ERROR;
+    }
+
     if (status != 0) {
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }

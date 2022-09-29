@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <math.h>
 
-
 // Create an instance of the sensor.
 HSCDTD008A geomag;
 
