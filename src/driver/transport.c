@@ -1,4 +1,5 @@
 #include "transport.h"
+#include "common.h"
 
 // Read limit is equal to the number of available registers.
 #define HSCDTD_TRANSPORT_READ_LIMIT 0x32
@@ -42,12 +43,12 @@ hscdtd_status_t read_register_multi(hscdtd_device_t *p_dev,
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }
 
+    status = t_read_register( reg, length, (uint8_t* ) p_buffer, p_dev);
     // Check if the read request does not exceed the chip's limits.
     if (length > HSCDTD_TRANSPORT_READ_LIMIT) {
         return HSCDTD_STAT_USER_ERROR;
     }
 
-    status = t_read_register(p_dev->addr, reg, length, (uint8_t* ) p_buffer);
     if (status != 0) {
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }
@@ -92,7 +93,7 @@ hscdtd_status_t write_register_multi(hscdtd_device_t *p_dev,
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }
 
-    status = t_write_register(p_dev->addr, reg, length, (uint8_t* ) p_buffer);
+    status = t_write_register( reg, length, (uint8_t* ) p_buffer, p_dev);
     if (status != 0) {
         return HSCDTD_STAT_TRANSPORT_ERROR;
     }

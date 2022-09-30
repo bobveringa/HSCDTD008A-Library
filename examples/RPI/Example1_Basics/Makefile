@@ -2,8 +2,14 @@
 INCLUDE=../../../src ../../../src/driver
 FLAGS = -DRPI -Wall -c
 
-Example1_Basics: Example1_Basics.o hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
-	g++ -o Example1_Basics Example1_Basics.o hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
+all: Example1_Basics
+
+
+Example1_Basics: Example1_Basics.o libhscdtd008a.a
+	g++ -o Example1_Basics Example1_Basics.o -L. -lhscdtd008a
+	
+libhscdtd008a.a: hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
+	 ar cvq libhscdtd008a.a hscdtd008a.o hscdtd008a_driver.o transport.o platform_rpi.o
 
 Example1_Basics.o: Example1_Basics.cpp 
 	g++ $(FLAGS) -I$(INCLUDE)  -o Example1_Basics.o Example1_Basics.cpp
@@ -21,4 +27,4 @@ platform_rpi.o: ../../../src/driver/platform_rpi.cpp
 	g++ $(FLAGS) -I$(INCLUDE)  -o  platform_rpi.o ../../../src/driver/platform_rpi.cpp
 
 clean:
-	rm -f *.o Example1_Basics 
+	rm -f *.o Example1_Basics  *.a

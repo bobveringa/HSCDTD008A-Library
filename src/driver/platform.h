@@ -2,23 +2,28 @@
 #define __PLATFORM__
 
 #include <stdint.h>
+#include "hscdtd008a_driver.h"
+#include "common.h"
 
 #define I2C_MODE_STD            100000
 #define I2C_MODE_FAST           400000
 #define I2C_MODE_FAST_PLUS      1000000
 #define I2C_MODE_HIGH_SPEED     3400000
 
+
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif // __cplusplus
+
 
 /**
  * @brief Open a connection with the device.
  *
  * @return 0 on success.
  */
-int8_t t_open(void);
+int8_t t_open(hscdtd_device_t *p_dev);
 
 /**
  * @brief Read registers from the device.
@@ -31,10 +36,10 @@ int8_t t_open(void);
  *
  * @return 0 on success.
  */
-int8_t t_read_register(uint8_t addr,
-                       uint8_t reg,
+int8_t t_read_register(uint8_t reg,
                        uint8_t length,
-                       uint8_t *p_buffer);
+                       uint8_t *p_buffer,
+					   hscdtd_device_t *p_dev);
 
 
 /**
@@ -47,17 +52,17 @@ int8_t t_read_register(uint8_t addr,
  *
  * @return 0 on success.
  */
-int8_t t_write_register(uint8_t addr,
-                        uint8_t reg,
+int8_t t_write_register(uint8_t reg,
                         uint8_t length,
-                        uint8_t *p_buffer);
+                        uint8_t *p_buffer,
+						hscdtd_device_t *p_dev);
 
 /**
  * @brief Flush the connection.
  *
  * @return 0 on success.
  */
-int8_t t_flush(void);
+int8_t t_flush(hscdtd_device_t *p_dev);
 
 
 /**
@@ -65,7 +70,7 @@ int8_t t_flush(void);
  *
  * @return 0 on success.
  */
-int8_t t_close(void);
+int8_t t_close(hscdtd_device_t *p_dev);
 
 
 /**

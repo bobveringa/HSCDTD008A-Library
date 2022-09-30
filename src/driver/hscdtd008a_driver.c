@@ -12,13 +12,13 @@
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
-                                                uint8_t addr)
+                                                uint8_t addr, char* device)
 {
     if (!p_dev) {
         return HSCDTD_STAT_ERROR;
     }
     p_dev->addr = addr;
-
+    p_dev->device = device;
     // The force state is the default state for the device.
     p_dev->state = HSCDTD_STATE_FORCE;
 
@@ -48,7 +48,7 @@ hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev)
     }
 
     // Open transport.
-    t_open();
+    t_open(p_dev);
 
     // Wait a bit for the I2C bus to open.
     t_sleep_ms(100);
