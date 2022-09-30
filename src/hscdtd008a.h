@@ -2,7 +2,9 @@
 #define __HSCDTD008A__
 
 #include "driver/hscdtd008a_driver.h"
+#ifdef RPI
 #include <cstddef>
+#endif
 
 class HSCDTD008A {
 public:
