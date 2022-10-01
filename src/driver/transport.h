@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "hscdtd008a_driver.h"
+#include "cookies.h"
 
 
 hscdtd_status_t read_register(hscdtd_device_t *p_dev,

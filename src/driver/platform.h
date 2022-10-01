@@ -2,6 +2,7 @@
 #define __PLATFORM__
 
 #include <stdint.h>
+#include "cookies.h"
 
 #define I2C_MODE_STD            100000
 #define I2C_MODE_FAST           400000
@@ -18,7 +19,7 @@ extern "C"
  *
  * @return 0 on success.
  */
-int8_t t_open(void);
+int8_t t_open(hscdtd_transport_cookie_t cookie);
 
 /**
  * @brief Read registers from the device.
@@ -31,7 +32,7 @@ int8_t t_open(void);
  *
  * @return 0 on success.
  */
-int8_t t_read_register(uint8_t addr,
+int8_t t_read_register(hscdtd_transport_cookie_t cookie,
                        uint8_t reg,
                        uint8_t length,
                        uint8_t *p_buffer);
@@ -47,7 +48,7 @@ int8_t t_read_register(uint8_t addr,
  *
  * @return 0 on success.
  */
-int8_t t_write_register(uint8_t addr,
+int8_t t_write_register(hscdtd_transport_cookie_t cookie,
                         uint8_t reg,
                         uint8_t length,
                         uint8_t *p_buffer);
@@ -57,7 +58,7 @@ int8_t t_write_register(uint8_t addr,
  *
  * @return 0 on success.
  */
-int8_t t_flush(void);
+int8_t t_flush(hscdtd_transport_cookie_t cookie);
 
 
 /**
@@ -65,7 +66,7 @@ int8_t t_flush(void);
  *
  * @return 0 on success.
  */
-int8_t t_close(void);
+int8_t t_close(hscdtd_transport_cookie_t cookie);
 
 
 /**

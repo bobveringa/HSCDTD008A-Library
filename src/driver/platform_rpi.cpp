@@ -7,7 +7,6 @@
  *
  * Distributed as-is; no warranty is given.
  ***************************************************************/
-
 #ifdef RPI
 #include "platform.h"
 #include "hscdtd008a_driver.h"

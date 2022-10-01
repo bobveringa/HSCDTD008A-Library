@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "platform.h"
+#include "cookies.h"
 
 /**
  * General Constants
@@ -103,7 +104,7 @@ typedef struct {
 
 
 typedef struct {
-    uint8_t addr;
+    hscdtd_transport_cookie_t cookie;
     hscdtd_state_t state;
     hscdtd_mode_t mode;
 } hscdtd_device_t;

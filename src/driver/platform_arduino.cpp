@@ -5,20 +5,21 @@
 #include <Wire.h>
 
 
-int8_t t_open(void)
+int8_t t_open(hscdtd_transport_cookie_t cookie)
 {
     Wire.begin();
     Wire.setClock(I2C_MODE_STD);
     return 0;
 }
 
-int8_t t_read_register(uint8_t addr,
+int8_t t_read_register(hscdtd_transport_cookie_t cookie,
                        uint8_t reg,
                        uint8_t length,
                        uint8_t *p_buffer)
 {
     uint8_t status;
     int8_t i = 0;
+    uint8_t addr = cookie.addr;
 
     Wire.beginTransmission(addr);
     Wire.write(reg);
@@ -34,12 +35,14 @@ int8_t t_read_register(uint8_t addr,
     return 0;
 }
 
-int8_t t_write_register(uint8_t addr,
+int8_t t_write_register(hscdtd_transport_cookie_t cookie,
                         uint8_t reg,
                         uint8_t length,
                         uint8_t *p_buffer)
 {
     uint8_t status;
+    uint8_t addr = cookie.addr;
+
 
     Wire.beginTransmission(addr);
     Wire.write(reg);
@@ -55,7 +58,7 @@ int8_t t_write_register(uint8_t addr,
     return 0;
 }
 
-int8_t t_flush(void)
+int8_t t_flush(hscdtd_transport_cookie_t cookie)
 {
     while (Wire.available() > 0) {
         Wire.read();  // just flush the data.
@@ -64,7 +67,7 @@ int8_t t_flush(void)
 }
 
 
-int8_t t_close(void)
+int8_t t_close(hscdtd_transport_cookie_t cookie)
 {
     uint8_t status;
 
