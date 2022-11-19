@@ -22,6 +22,15 @@ void HSCDTD008A::begin(uint8_t device_addr)
     hscdtd_configure_virtual_device(&this->device, device_addr);
 }
 
+/**
+ * @brief Init the transportation cookie
+ * @param device_addr I2C address.
+ */
+hscdtd_status_t HSCDTD008A::initialize_transport(platform_cookie_t *cookie)
+{
+    return hscdtd_initialize_transport(&this->device, cookie);
+}
+
 
 /**
  * @brief Initialize the device.

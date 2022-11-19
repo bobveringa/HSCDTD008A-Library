@@ -7,6 +7,7 @@ class HSCDTD008A {
 public:
     void begin(void);
     void begin(uint8_t device_addr);
+    hscdtd_status_t initialize_transport(platform_cookie_t *cookie);
     hscdtd_status_t initialize(void);
     hscdtd_status_t startMeasurement(void);
     hscdtd_status_t temperatureCompensation(void);

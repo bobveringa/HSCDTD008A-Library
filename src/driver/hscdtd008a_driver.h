@@ -124,6 +124,9 @@ typedef enum {
 hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
                                                 uint8_t addr);
 
+hscdtd_status_t hscdtd_initialize_transport(hscdtd_device_t *p_dev,
+                                            platform_cookie_t *cookie);
+
 hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev);
 
 hscdtd_status_t hscdtd_set_mode(hscdtd_device_t *p_dev, hscdtd_mode_t mode);

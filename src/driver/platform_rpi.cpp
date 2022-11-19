@@ -19,28 +19,27 @@
 #include <unistd.h>
 #include <string.h>
 #include <linux/i2c-dev.h>
-#define I2C_ADDR 0x0f
-#define device "/dev/i2c-1"
 #ifndef I2C_M_RD
 #include <linux/i2c.h>
 #endif
 
-int fd = -1;
 
-int8_t t_open(void)
+int8_t t_open(hscdtd_transport_cookie_t cookie)
 {
-    fd = open(device, O_RDWR); 
+    int fd = open(cookie.platform_cookie.device, O_RDWR); 
     if (fd >= 0)
     {
-       if (ioctl(fd, I2C_SLAVE, I2C_ADDR) < 0) {
+       if (ioctl(fd, I2C_SLAVE, cookie.addr) < 0) {
         printf("ioctl error: %s\n", strerror(errno));
         return 1;
        }
-    }   
+    }
+    cookie.platform_cookie.fd = fd;
+
     return (fd < 0);
 }
 
-int8_t t_read_register(uint8_t addr,
+int8_t t_read_register(hscdtd_transport_cookie_t cookie,
                        uint8_t reg,
                        uint8_t length,
                        uint8_t *p_buffer)
@@ -51,7 +50,7 @@ int8_t t_read_register(uint8_t addr,
     struct i2c_rdwr_ioctl_data msgset[1];
 
     // prepare I2C message to select register to be read
-    msgs[0].addr = addr;
+    msgs[0].addr = cookie.addr;
     msgs[0].flags = 0;
     msgs[0].len = 1;
     msgs[0].buf = outbuf;
@@ -59,7 +58,7 @@ int8_t t_read_register(uint8_t addr,
     outbuf[0] = reg;
    
     // prepare I2C to read selected register  
-    msgs[1].addr = addr;
+    msgs[1].addr = cookie.addr;
     msgs[1].flags = I2C_M_RD | I2C_M_NOSTART;
     msgs[1].len = length;
     msgs[1].buf = inbuf;
@@ -76,11 +75,11 @@ int8_t t_read_register(uint8_t addr,
 
     // hand over prepared messages to the kernel via ioctl driver for execution
     *p_buffer = 0;
-    if (ioctl(fd, I2C_RDWR, &msgset) < 0) {
+    if (ioctl(cookie.platform_cookie.fd, I2C_RDWR, &msgset) < 0) {
         printf("ioctl(I2C_RDWR) in i2c_read");
         printf("t_read_register: Error writing to i2c device: %s\n", 
-  		strerror(errno));
-        printf("t_read_register: addr=0x%x, reg=0x%x, length=%d \n", addr, reg, length);
+          strerror(errno));
+        printf("t_read_register: addr=0x%x, reg=0x%x, length=%d \n", cookie.addr, reg, length);
 
         return -1;
     }
@@ -90,7 +89,7 @@ int8_t t_read_register(uint8_t addr,
     return 0;
 }
 
-int8_t t_write_register(uint8_t addr,
+int8_t t_write_register(hscdtd_transport_cookie_t cookie,
                         uint8_t reg,
                         uint8_t length,
                         uint8_t *p_buffer)
@@ -106,7 +105,7 @@ int8_t t_write_register(uint8_t addr,
     strncpy((char*)buffer+1, (char*) p_buffer, length);
    
     // prepare i2c write message 
-    msgs[0].addr = addr;
+    msgs[0].addr = cookie.addr;
     msgs[0].flags = 0;
     msgs[0].len = length+1;
     msgs[0].buf = buffer;
@@ -115,11 +114,12 @@ int8_t t_write_register(uint8_t addr,
     msgset[0].nmsgs = 1;
 
     // hand over prepared messages to the kernel driver via ioctl for execution
-    if (ioctl(fd, I2C_RDWR, &msgset) < 0)
+    if (ioctl(cookie.platform_cookie.fd, I2C_RDWR, &msgset) < 0)
     {
         printf("t_write_register: ioctl(I2C_RDWR) in i2c_write");
-	printf("Error writing to i2c device: %s.\n", strerror(errno));
-	printf("t_write_register: addr=0x%x, reg=0x%x, length=%d \n", addr, reg, length);
+        printf("Error writing to i2c device: %s.\n", strerror(errno));
+        printf("t_write_register: addr=0x%x, reg=0x%x, length=%d \n",
+               cookie.addr, reg, length);
 
         return -1;
     }
@@ -127,15 +127,15 @@ int8_t t_write_register(uint8_t addr,
     return 0;
 }
 
-int8_t t_flush(void)
+int8_t t_flush(hscdtd_transport_cookie_t cookie)
 {
     return 0;
 }
 
 
-int8_t t_close(void)
+int8_t t_close(hscdtd_transport_cookie_t cookie)
 {
-    close(fd);
+    close(cookie.platform_cookie.fd);
     return 0;
 }
 

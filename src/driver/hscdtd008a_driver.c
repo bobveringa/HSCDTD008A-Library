@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "hscdtd008a_driver.h"
 #include "hscdtd008a_reg.h"
 #include "platform.h"
@@ -8,7 +10,7 @@
  * @brief Configure the virtual device.
  *
  * @param p_dev Pointer to device struct.
- * @param addr I2C addres of the device.
+ * @param addr I2C address of the device.
  * @return hscdtd_status.
  */
 hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
@@ -17,13 +19,32 @@ hscdtd_status_t hscdtd_configure_virtual_device(hscdtd_device_t *p_dev,
     if (!p_dev) {
         return HSCDTD_STAT_ERROR;
     }
-    p_dev->addr = addr;
+    p_dev->cookie.addr = addr;
 
     // The force state is the default state for the device.
     p_dev->state = HSCDTD_STATE_FORCE;
 
     // Standby is the default mode.
     p_dev->mode = HSCDTD_MODE_STANDBY;
+
+    return HSCDTD_STAT_OK;
+}
+
+/**
+ * @brief Initialize the transport cookie on the virtual device.
+ * 
+ * @param p_dev Pointer to device struct.
+ * @param cookie Pointer to platform cookie.
+ * @return hscdtd_status_t.
+ */
+hscdtd_status_t hscdtd_initialize_transport(hscdtd_device_t *p_dev,
+                                            platform_cookie_t *cookie)
+{
+    if (!p_dev) {
+        return HSCDTD_STAT_ERROR;
+    }
+    // Configure the platform
+    memcpy(&p_dev->cookie.platform_cookie, cookie, sizeof(platform_cookie_t));
 
     return HSCDTD_STAT_OK;
 }
@@ -48,7 +69,7 @@ hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev)
     }
 
     // Open transport.
-    t_open();
+    t_open(p_dev->cookie);
 
     // Wait a bit for the I2C bus to open.
     t_sleep_ms(100);
@@ -90,7 +111,7 @@ hscdtd_status_t hscdtd_initialize(hscdtd_device_t *p_dev)
     if (status != HSCDTD_STAT_OK)
         return status;
 
-    // Do a selftest
+    // Do a self test
     status = hscdtd_self_test(p_dev);
     if (status != HSCDTD_STAT_OK)
         return status;
@@ -273,7 +294,7 @@ hscdtd_status_t hscdtd_set_fifo_data_storage_method(hscdtd_device_t *p_dev,
  *  - 'Or' comparision (Default)
  *  - 'And' comparision.
  *
- * Refer to page 11 of the datasheet for more information on corret values.
+ * Refer to page 11 of the datasheet for more information on correct values.
  *
  * This functionality is only available if FIFO is enabled.
  *
@@ -464,12 +485,12 @@ hscdtd_status_t hscdtd_who_i_am_check(hscdtd_device_t *p_dev)
     hscdtd_status_t status;
     uint8_t reg;
 
-    // The datasheet refers to the WIA regster
+    // The datasheet refers to the WIA register
     status = read_register(p_dev, HSCDTD_REG_WIA, &reg);
     if (status != HSCDTD_STAT_OK)
         return status;
 
-    // Value should be 0x49 according to the datashset.
+    // Value should be 0x49 according to the datasheet.
     if (reg != 0x49)
         return HSCDTD_STAT_CHECK_FAILED;
     return HSCDTD_STAT_OK;
@@ -518,7 +539,7 @@ hscdtd_status_t hscdtd_offset_calibration(hscdtd_device_t *p_dev)
 
 
 /**
- * @brief Starts temperature compenstation.
+ * @brief Starts temperature compensation.
  *
  * Reads temperature and calibrates sensor values
  * based on measured temperature.
@@ -618,7 +639,7 @@ int8_t hscdtd_read_temp(hscdtd_device_t *p_dev)
 
 
 /**
- * @brief Perform a selftest on the chip.
+ * @brief Perform a self test on the chip.
  *
  * Refer to 'Selftest' on page 6 of the datasheet for more information.
  *
@@ -853,7 +874,7 @@ hscdtd_status_t hscdtd_set_offset(hscdtd_device_t *p_dev,
     // Use a variable to make it easier to support 14bit in the future.
     float max_offset = HSCDTD_15BIT_MAX_VALUE;
 
-    // The sensor substracts the offset from the sensor value.
+    // The sensor subtracts the offset from the sensor value.
     // This doesn't really make sense from a user perspective. So the
     // negative version of the user supplied offset is applied.
     // Put those in a array to simplify conversion.
